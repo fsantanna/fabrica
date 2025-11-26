@@ -15,9 +15,9 @@ func Pipe (pos, pip) {
         }
     } with {
         loop {
-            await(:mouse.button.dn, \{pico.vs.pos_rect(it,rect)})
+            val m = await(:mouse.button.dn, :left, \{pico.vs.pos_rect(it,rect)})
             watching @.200 {
-                await(:mouse.button.dn, \{pico.vs.pos_rect(it,rect)})
+                await(:mouse.button.dn, :left, \{pico.vs.pos_rect(it,rect)})
                 spawn [HAND] Piece @{ tag=pip, img=img, rot=0 }
             }
         }

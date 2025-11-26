@@ -62,27 +62,29 @@ pin hand = tasks(1)     ;; somente 1 peça "na mão" por vez
 set HAND = hand         ;; torna mão uma global
 
 func Piece (this) {
-    spawn {
-        every :draw {
-            val pos = pico.get.mouse() -> pos_lc -> lc_pos
-            pico.zet.anchor.draw(:top, :left)
-            pico.zet.rotate(this.rot)
-            pico.output.draw.buffer(pos, this.img)
-            pico.zet.rotate(0)
-        }
-    }
-    do :ok {
-        loop {
-            await :mouse.button.dn
-            watching @.200 {
-                await :mouse.button.dn
-                escape :ok
+    watching :mouse.button.dn, :right {
+        spawn {
+            every :draw {
+                val pos = pico.get.mouse() -> pos_lc -> lc_pos
+                pico.zet.anchor.draw(:top, :left)
+                pico.zet.rotate(this.rot)
+                pico.output.draw.buffer(pos, this.img)
+                pico.zet.rotate(0)
             }
-            set this.rot = this.rot + 90
         }
+        do :ok {
+            loop {
+                await(:mouse.button.dn, :left)
+                watching @.200 {
+                    await(:mouse.button.dn, :left)
+                    escape :ok
+                }
+                set this.rot = this.rot + 90
+            }
+        }
+        val lc = pico.get.mouse() -> pos_lc
+        set MAP[lc.l+1][lc.c+1] = this
     }
-    val lc = pico.get.mouse() -> pos_lc
-    set MAP[lc.l+1][lc.c+1] = this
 }
 
 await(false)
