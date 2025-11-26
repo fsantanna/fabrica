@@ -1,23 +1,24 @@
 val pico = require "pico"
 
 val _ = pico.color.white
+val x = pico.color.gray
 val B = pico.color.black
 
 @{
     pipe = @{
         straight = @{
-            @{ _, _, _, _, _ },
-            @{ _, _, _, _, _ },
+            @{ x, x, x, x, x },
+            @{ x, _, _, _, x },
             @{ B, B, B, B, B },
-            @{ _, _, _, _, _ },
-            @{ _, _, _, _, _ },
+            @{ x, _, _, _, x },
+            @{ x, x, x, x, x },
         },
         curve = @{
-            @{ _, _, B, _, _ },
-            @{ _, _, B, _, _ },
-            @{ _, _, B, B, B },
-            @{ _, _, _, _, _ },
-            @{ _, _, _, _, _ },
+            @{ x, x, B, x, x },
+            @{ x, _, B, _, x },
+            @{ x, _, B, B, B },
+            @{ x, _, _, _, x },
+            @{ x, x, x, x, x },
         },
     },
 }

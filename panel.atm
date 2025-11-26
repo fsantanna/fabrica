@@ -1,0 +1,49 @@
+val pico = require "pico"
+val art  = require "art"
+
+func Pipe (pos, pip) {
+    val img = art.pipe[pip]
+    val rect = X.copy(pos) --> \{
+        set it.w = 5
+        set it.h = 5
+        it
+    }
+    par {
+        every :draw {
+            pico.zet.anchor.draw(:center, :middle)
+            pico.output.draw.buffer(pos, img)
+        }
+    } with {
+        loop {
+            await(:mouse.button.dn, \{pico.vs.pos_rect(it,rect)})
+            watching @.250 {
+                val pos = await(:mouse.button.dn, \{pico.vs.pos_rect(it,rect)})
+print('x', pos)
+                spawn [HAND] Piece @{ tag=pip, pos=pos, img=img }
+            }
+        }
+    }
+}
+
+func Panel () {
+    val r = pico.pos(99, 99)
+    set r.w = 20
+    set r.h = 10
+    par {
+        every :draw {
+            pico.zet.color.draw(pico.color.white)
+            pico.zet.anchor.draw(:right, :bottom)
+            pico.output.draw.rect(r)
+        }
+    } with {
+        spawn Pipe(p, :straight) where {
+            p = pico.pos(@{x=33,y=50}, r, @{x=:right,y=:bottom})
+        }
+        spawn Pipe(p, :curve) where {
+            p = pico.pos(@{x=66,y=50}, r, @{x=:right,y=:bottom})
+        }
+        await(false)
+    }
+}
+
+Panel
