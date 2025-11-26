@@ -7,18 +7,20 @@ val B = pico.color.black
 @{
     pipe = @{
         straight = @{
-            @{ x, x, x, x, x },
-            @{ x, _, _, _, x },
-            @{ B, B, B, B, B },
-            @{ x, _, _, _, x },
-            @{ x, x, x, x, x },
+            @{ x, x, x, x, x, x },
+            @{ x, _, _, _, _, x },
+            @{ B, B, B, B, B, B },
+            @{ B, B, B, B, B, B },
+            @{ x, _, _, _, _, x },
+            @{ x, x, x, x, x, x },
         },
         curve = @{
-            @{ x, x, B, x, x },
-            @{ x, _, B, _, x },
-            @{ x, _, B, B, B },
-            @{ x, _, _, _, x },
-            @{ x, x, x, x, x },
+            @{ x, x, B, B, x, x },
+            @{ x, _, B, B, _, x },
+            @{ x, _, B, B, B, B },
+            @{ x, _, B, B, B, B },
+            @{ x, _, _, _, _, x },
+            @{ x, x, x, x, x, x },
         },
     },
 }

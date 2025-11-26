@@ -5,14 +5,14 @@ val pico  = require "pico"
 val art   = require "art"
 val Panel = require "panel"
 
-set W = 100
-set H = 100
-set R = 5
+set W = 120
+set H = 120
+set R = 6
 set w = W/R
 set h = H/R
 
 pico.zet.title("Fábrica");
-pico.zet.size.window(@{x=5*W,y=5*H}, @{x=W,y=H})
+pico.zet.size.window(@{x=R*W,y=R*H}, @{x=W,y=H})
 pico.zet.expert(true);
 
 set MAP = @{}

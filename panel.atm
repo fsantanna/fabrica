@@ -4,8 +4,8 @@ val art  = require "art"
 func Pipe (pos, pip) {
     val img = art.pipe[pip]
     val rect = X.copy(pos) --> \{
-        set it.w = 5
-        set it.h = 5
+        set it.w = R
+        set it.h = R
         it
     }
     par {
