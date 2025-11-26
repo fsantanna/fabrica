@@ -1,0 +1,57 @@
+require "atmos.env.pico"
+
+val X      = require "atmos.x"
+val pico   = require "pico"
+val art    = require "art"
+val Player = require "player"
+
+set W = 100
+set H = 100
+set R = 5
+set w = W/R
+set h = H/R
+
+pico.zet.title("Master of Pixelization");
+pico.zet.size.window(@{x=5*W,y=5*H}, @{x=W,y=H})
+pico.zet.color.clear(pico.color.gray)
+pico.zet.expert(true);
+
+set MAP = @{}
+loop l in h {
+    set MAP[l] = @{}
+    loop c in w {
+        set MAP[l][c] = nil
+    }
+}
+
+math.randomseed()
+
+spawn {
+    every :draw {
+        loop l in h {
+            loop c in w {
+                val tile = MAP[l][c]
+                if tile {
+                    val pos = pico.pos(c*R, l*R)
+                    pico.output.draw.buffer(pos, art.pipe.curve)
+                }
+            }
+        }
+    }
+}
+
+;;;
+pin civs = tasks(5)
+loop clr, pos in ps {
+    spawn [civs] Civ(clr, pos)
+}
+;;;
+
+every m in :mouse.button.dn {
+    val l = m.y / R --> math.floor
+    val c = m.x / R --> math.floor
+X.print(l, c, m)
+    set MAP[l][c] = art.pipe.curve
+}
+
+await(false)
