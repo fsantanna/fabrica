@@ -19,7 +19,7 @@ set MAP = @{}
 loop l in h {
     set MAP[l] = @{}
     loop c in w {
-        set MAP[l][c] = nil
+        set MAP[l][c] = nil     ;; { img=buffer, rot=degrees }
     }
 }
 
@@ -29,11 +29,13 @@ spawn {
     every :draw {
         loop l in h {
             loop c in w {
-                val tile = MAP[l][c]
-                if tile {
+                val t = MAP[l][c]
+                if t {
                     val pos = pico.pos((c-1)*R, (l-1)*R)
                     pico.zet.anchor.draw(:left, :top)
-                    pico.output.draw.buffer(pos, tile)
+                    pico.zet.rotate(t.rot)
+                    pico.output.draw.buffer(pos, t.img)
+                    pico.zet.rotate(0)
                 }
             }
         }
@@ -46,16 +48,28 @@ pin hand = tasks(1)     ;; somente 1 peça "na mão" por vez
 set HAND = hand         ;; torna mão uma global
 
 func Piece (this) {
-    watching :mouse.button.dn {
+    spawn {
         every :draw {
             pico.zet.anchor.draw(:center, :middle)
+            pico.zet.rotate(this.rot)
             pico.output.draw.buffer(pico.get.mouse(), this.img)
+            pico.zet.rotate(0)
+        }
+    }
+    do :ok {
+        loop {
+            await :mouse.button.dn
+            watching @.200 {
+                await :mouse.button.dn
+                escape :ok
+            }
+            set this.rot = this.rot + 90
         }
     }
     val pos = pico.get.mouse()
     val l = pos.y / R --> math.floor
     val c = pos.x / R --> math.floor
-    set MAP[l+1][c+1] = this.img
+    set MAP[l+1][c+1] = this
 }
 
 await(false)
