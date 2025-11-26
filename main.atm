@@ -31,7 +31,7 @@ spawn {
             loop c in w {
                 val t = MAP[l][c]
                 if t {
-                    val pos = pico.pos((c-1)*R, (l-1)*R)
+                    val pos = @{ x=(c-1)*R, y=(l-1)*R }
                     pico.zet.anchor.draw(:left, :top)
                     pico.zet.rotate(t.rot)
                     pico.output.draw.buffer(pos, t.img)
@@ -67,8 +67,8 @@ func Piece (this) {
         }
     }
     val pos = pico.get.mouse()
-    val l = pos.y / R --> math.floor
-    val c = pos.x / R --> math.floor
+    val l = pos.y // R
+    val c = pos.x // R
     set MAP[l+1][c+1] = this
 }
 
