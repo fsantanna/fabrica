@@ -33,7 +33,7 @@ spawn {
                 if tile {
                     val pos = pico.pos((c-1)*R, (l-1)*R)
                     pico.zet.anchor.draw(:left, :top)
-                    pico.output.draw.buffer(pos, art.pipe.straight)
+                    pico.output.draw.buffer(pos, tile)
                 }
             }
         }
@@ -47,20 +47,14 @@ set HAND = hand         ;; torna mão uma global
 
 func Piece (this) {
     watching :mouse.button.dn {
-        par {
-            every m in :mouse.motion {
-                set this.pos = X.copy(m)
-            }
-        } with {
-            every :draw {
-                pico.zet.anchor.draw(:center, :middle)
-                pico.output.draw.buffer(this.pos, this.img)
-            }
+        every :draw {
+            pico.zet.anchor.draw(:center, :middle)
+            pico.output.draw.buffer(pico.get.mouse(), this.img)
         }
     }
-print('y', pos)
-    val l = this.pos.y / R --> math.floor
-    val c = this.pos.x / R --> math.floor
+    val pos = pico.get.mouse()
+    val l = pos.y / R --> math.floor
+    val c = pos.x / R --> math.floor
     set MAP[l+1][c+1] = this.img
 }
 
