@@ -12,7 +12,8 @@ set w = W/R
 set h = H/R
 
 pico.zet.title("Fábrica");
-pico.zet.size.window(@{x=R*W,y=R*H}, @{x=W,y=H})
+pico.zet.dim.window(R*W, R*H)
+pico.zet.dim.world(W, H)
 pico.zet.expert(true);
 
 func pos_lc (pos) {
@@ -46,7 +47,7 @@ spawn {
                 val t = MAP[l][c]
                 if t {
                     val pos = @{ l=l-1, c=c-1 } -> lc_pos
-                    pico.zet.anchor.draw(:left, :top)
+                    pico.zet.anchor.pos(:left, :top)
                     pico.zet.rotate(t.rot)
                     pico.output.draw.buffer(pos, t.img)
                     pico.zet.rotate(0)
@@ -56,7 +57,11 @@ spawn {
     }
 }
 
-spawn Panel()
+val r = pico.rect (
+    @{ x=50,  y=90 },
+    @{ x=100, y=20 },
+)
+spawn Panel(r)
 
 pin hand = tasks(1)     ;; somente 1 peça "na mão" por vez
 set HAND = hand         ;; torna mão uma global
@@ -66,7 +71,7 @@ func Piece (this) {
         spawn {
             every :draw {
                 val pos = pico.get.mouse() -> pos_lc -> lc_pos
-                pico.zet.anchor.draw(:top, :left)
+                pico.zet.anchor.pos(:top, :left)
                 pico.zet.rotate(this.rot)
                 pico.output.draw.buffer(pos, this.img)
                 pico.zet.rotate(0)

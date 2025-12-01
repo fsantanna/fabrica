@@ -1,17 +1,16 @@
 val pico = require "pico"
 val art  = require "art"
 
-func Pipe (pos, pip) {
+func Pipe (pip, pos) {
     val img = art.pipe[pip]
-    val rect = X.copy(pos) --> \{
-        set it.w = R
-        set it.h = R
-        it
-    }
+    var rect = @{ w=R, h=R }
     par {
         every :draw {
-            pico.zet.anchor.draw(:center, :middle)
-            pico.output.draw.buffer(pos, img)
+            val p = pico.pos(pos)
+            set rect.x = p.x
+            set rect.y = p.y
+            pico.zet.anchor.pos(:center, :middle)
+            pico.output.draw.buffer(p, img)
         }
     } with {
         loop {
@@ -24,24 +23,25 @@ func Pipe (pos, pip) {
     }
 }
 
-func Panel () {
-    val r = pico.pos(99, 99)
-    set r.w = 20
-    set r.h = 10
+func Panel (r) {
     par {
         every :draw {
-            pico.zet.color.draw(pico.color.white)
-            pico.zet.anchor.draw(:right, :bottom)
-            pico.output.draw.rect(r)
+            pico.zet.viewport(r)
+            pico.zet.color.clear(pico.color.white)
+            pico.output.clear()
+            pico.zet.color.clear(pico.color.black)
         }
     } with {
-        spawn Pipe(p, :straight) where {
-            p = pico.pos(@{x=33,y=50}, r, @{x=:right,y=:bottom})
-        }
-        spawn Pipe(p, :curve) where {
-            p = pico.pos(@{x=66,y=50}, r, @{x=:right,y=:bottom})
-        }
+        spawn Pipe(:straight, @{x=33,y=50})
+        spawn Pipe(:curve,    @{x=66,y=50})
         await(false)
+    } with {
+        every :draw {
+            pico.zet.color.draw(pico.color.red)
+            X.print(:R, pico.rect(50,50,50,50))
+            pico.output.draw.rect(pico.rect(50,50,50,50))
+            pico.zet.viewport()
+        }
     }
 }
 
