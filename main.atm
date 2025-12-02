@@ -51,6 +51,7 @@ spawn {
                     pico.zet.rotate(t.rot)
                     pico.output.draw.buffer(pos, t.img)
                     pico.zet.rotate(0)
+                    pico.zet.anchor.pos(:center, :middle)
                 }
             }
         }
@@ -75,6 +76,7 @@ func Piece (this) {
                 pico.zet.rotate(this.rot)
                 pico.output.draw.buffer(pos, this.img)
                 pico.zet.rotate(0)
+                pico.zet.anchor.pos(:center, :middle)
             }
         }
         do :ok {

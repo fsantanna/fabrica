@@ -3,16 +3,12 @@ val art  = require "art"
 
 func Pipe (pip, pos) {
     val img = art.pipe[pip]
-    var rect = @{ w=R, h=R }
     par {
         every :draw {
-            val p = pico.pos(pos)
-            set rect.x = p.x
-            set rect.y = p.y
-            pico.zet.anchor.pos(:center, :middle)
-            pico.output.draw.buffer(p, img)
+            pico.output.draw.buffer(pos, img)
         }
     } with {
+        var rect = @{ x=pos.x, y=pos.y, w=R, h=R }
         loop {
             val m = await(:mouse.button.dn, :left, \{pico.vs.pos_rect(it,rect)})
             watching @.200 {
@@ -26,21 +22,20 @@ func Pipe (pip, pos) {
 func Panel (r) {
     par {
         every :draw {
-            pico.zet.viewport(r)
+            pico.zet.clip(r)
             pico.zet.color.clear(pico.color.white)
+            ;;pico.push @{}
             pico.output.clear()
-            pico.zet.color.clear(pico.color.black)
         }
     } with {
-        spawn Pipe(:straight, @{x=33,y=50})
-        spawn Pipe(:curve,    @{x=66,y=50})
+        spawn Pipe(:straight, pico.pos(@{x=33,y=50}, r))
+        spawn Pipe(:curve,    pico.pos(@{x=66,y=50}, r))
         await(false)
     } with {
         every :draw {
-            pico.zet.color.draw(pico.color.red)
-            X.print(:R, pico.rect(50,50,50,50))
-            pico.output.draw.rect(pico.rect(50,50,50,50))
-            pico.zet.viewport()
+            pico.zet.color.clear(pico.color.black)
+            pico.zet.clip()
+            ;; pico.pop()
         }
     }
 }
