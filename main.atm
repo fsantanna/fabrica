@@ -5,11 +5,11 @@ val pico  = require "pico"
 val art   = require "art"
 val Panel = require "panel"
 
-set W = 120
-set H = 120
 set R = 6
-set w = W/R
-set h = H/R
+set w = 15
+set h = 15
+set W = R*w
+set H = R*(h+2)
 
 pico.zet.title("Fábrica");
 pico.zet.dim.window(R*W, R*H)
@@ -58,10 +58,8 @@ spawn {
     }
 }
 
-val r = pico.rect (
-    @{ x=50,  y=90 },
-    @{ x=100, y=20 },
-)
+val r = @{ x=W/2, y=H-R, w=W, h=2*R }
+X.print(r)
 spawn Panel(r)
 
 pin hand = tasks(1)     ;; somente 1 peça "na mão" por vez
@@ -79,19 +77,22 @@ func Piece (this) {
                 pico.zet.anchor.pos(:center, :middle)
             }
         }
-        do :ok {
-            loop {
+        loop {
+            await(:mouse.button.dn, :left)
+            val e = watching @.200 {
                 await(:mouse.button.dn, :left)
-                watching @.200 {
-                    await(:mouse.button.dn, :left)
-                    escape :ok
+                val lc = pico.get.mouse() -> pos_lc
+                if (lc.c < w) && (lc.l < h) {
+                    set MAP[lc.l+1][lc.c+1] = this
+                    return()  ;; piece placed
                 }
+            }
+            if e == :clock {
                 set this.rot = this.rot + 90
             }
         }
-        val lc = pico.get.mouse() -> pos_lc
-        set MAP[lc.l+1][lc.c+1] = this
     }
+    ;; piece displaced
 }
 
 await(false)
