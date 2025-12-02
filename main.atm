@@ -66,13 +66,29 @@ pin hand = tasks(1)     ;; somente 1 peça "na mão" por vez
 set HAND = hand         ;; torna mão uma global
 
 func Piece (this) {
+    val check = func (c, l) {
+        ifs {
+            (c < 0) || (c >= w) => false
+            (l < 0) || (l >= h) => false
+            else => true
+        }
+    }
     watching :mouse.button.dn, :right {
         spawn {
+            val G = pico.color.green -> X.copy
+            set G.a = 0x99
             every :draw {
-                val pos = pico.get.mouse() -> pos_lc -> lc_pos
+                val lc  = pico.get.mouse() -> pos_lc
+                val pos = lc -> lc_pos
                 pico.zet.anchor.pos(:top, :left)
                 pico.zet.rotate(this.rot)
                 pico.output.draw.buffer(pos, this.img)
+                if check(lc.c, lc.l) {
+                    pico.zet.color.draw(G)
+                    pico.output.draw.rect @{
+                        x=pos.x, y=pos.y, w=R, h=R
+                    }
+                }
                 pico.zet.rotate(0)
                 pico.zet.anchor.pos(:center, :middle)
             }
@@ -82,7 +98,7 @@ func Piece (this) {
             val e = watching @.200 {
                 await(:mouse.button.dn, :left)
                 val lc = pico.get.mouse() -> pos_lc
-                if (lc.c < w) && (lc.l < h) {
+                if check(lc.c, lc.l) {
                     set MAP[lc.l+1][lc.c+1] = this
                     return()  ;; piece placed
                 }
