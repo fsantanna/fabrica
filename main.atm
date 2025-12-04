@@ -70,21 +70,29 @@ func Piece (this) {
         ifs {
             (c < 0) || (c >= w) => false
             (l < 0) || (l >= h) => false
-            else => true
+            else => {
+                val up = (l > 0)     && MAP[l][c+1]
+                val dn = (l < (h-1)) && MAP[l+2][c+1]
+                ifs {
+                    (up && (up.img == art.pipe.straight)) => false
+                    (dn && (dn.img == art.pipe.straight)) => false
+                    else => true
+                }
+            }
         }
     }
     watching :mouse.button.dn, :right {
         spawn {
-            val G = pico.color.green -> X.copy
-            set G.a = 0x99
+            val no = pico.color.red -> X.copy
+            set no.a = 0x99
             every :draw {
                 val lc  = pico.get.mouse() -> pos_lc
                 val pos = lc -> lc_pos
                 pico.zet.anchor.pos(:top, :left)
                 pico.zet.rotate(this.rot)
                 pico.output.draw.buffer(pos, this.img)
-                if check(lc.c, lc.l) {
-                    pico.zet.color.draw(G)
+                if !check(lc.c, lc.l) {
+                    pico.zet.color.draw(no)
                     pico.output.draw.rect @{
                         x=pos.x, y=pos.y, w=R, h=R
                     }
