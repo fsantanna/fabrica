@@ -34,7 +34,7 @@ set MAP = @{}
 loop l in h {
     set MAP[l] = @{}
     loop c in w {
-        set MAP[l][c] = nil     ;; { img=buffer, rot=degrees }
+        set MAP[l][c] = nil     ;; { tag=:tag, img=buffer, rot=degrees }
     }
 }
 
@@ -66,28 +66,32 @@ set HAND = hand         ;; torna mão uma global
 
 func conn_up_dn (up, dn) {
     var n = 0
-    set n = n + match up.img {
-        art.pipe.straight => if (up.rot==90) || (up.rot==270) => 1 => 0
-        art.pipe.curve    => if (up.rot==90) || (up.rot==180) => 1 => 0
+    set n = n + match up {
+        :machine       => 1
+        :pipe.straight => if (up.rot==90) || (up.rot==270) => 1 => 0
+        :pipe.curve    => if (up.rot==90) || (up.rot==180) => 1 => 0
     }
-    set n = n + match dn.img {
-        art.pipe.straight => if (dn.rot==90) || (dn.rot==270) => 1 => 0
-        art.pipe.curve    => if (dn.rot== 0) || (dn.rot==270) => 1 => 0
+    set n = n + match dn {
+        :machine       => 1
+        :pipe.straight => if (dn.rot==90) || (dn.rot==270) => 1 => 0
+        :pipe.curve    => if (dn.rot== 0) || (dn.rot==270) => 1 => 0
     }
-    (n != 1)
+    n
 }
 
 func conn_le_ri (le, ri) {
     var n = 0
-    set n = n + match le.img {
-        art.pipe.straight => if (le.rot==90) || (le.rot==270) => 0 => 1
-        art.pipe.curve    => if (le.rot== 0) || (le.rot== 90) => 0 => 1
+    set n = n + match le {
+        :machine       => 1
+        :pipe.straight => if (le.rot==0) || (le.rot==180) => 1 => 0
+        :pipe.curve    => if (le.rot==0) || (le.rot== 90) => 1 => 0
     }
-    set n = n + match ri.img {
-        art.pipe.straight => if (ri.rot== 90) || (ri.rot==270) => 1 => 0
-        art.pipe.curve    => if (ri.rot==180) || (ri.rot==270) => 1 => 0
+    set n = n + match ri {
+        :machine       => 1
+        :pipe.straight => if (le.rot==  0) || (le.rot==180) => 1 => 0
+        :pipe.curve    => if (ri.rot==180) || (ri.rot==270) => 1 => 0
     }
-    (n != 1)
+    n
 }
 
 func check (this, c, l) {
@@ -100,12 +104,22 @@ func check (this, c, l) {
             val dn = (l < (h-1)) && MAP[l+2][c+1]   ;; direction
             val le = (c > 0)     && MAP[l+1][c]
             val ri = (c < (w-1)) && MAP[l+1][c+2]
-            ifs {
-                (up && !conn_up_dn(up, this)) => false
-                (dn && !conn_up_dn(this, dn)) => false
-                (le && !conn_le_ri(le, this)) => false
-                (ri && !conn_le_ri(this, ri)) => false
-                else => true
+            val mm = (this ?? :machine) && (
+                (up ?? :machine) ||
+                (dn ?? :machine) ||
+                (le ?? :machine) ||
+                (ri ?? :machine)
+            )
+            if mm {
+                false   ;; machine <-> machine
+            } else {
+                val n1 = if up => conn_up_dn(up, this) => 0
+                val n2 = if dn => conn_up_dn(this, dn) => 0
+                val n3 = if le => conn_le_ri(le, this) => 0
+                val n4 = if ri => conn_le_ri(this, ri) => 0
+                (n1 != 1) && (n2 != 1) && (n3 != 1) && (n4 != 1) && (
+                    (n1+n2+n3+n4) <= 2
+                )
             }
         }
     }

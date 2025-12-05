@@ -2,7 +2,7 @@
 
 # Instructions
 
-- Tiles at the bottom right
+- Tiles at the bottom
 - Double click to grab the desired tile
 - Click to rotate
 - Double click to apply
