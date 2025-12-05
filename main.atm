@@ -59,28 +59,44 @@ spawn {
 }
 
 val r = @{ x=W/2, y=H-R, w=W, h=2*R }
-X.print(r)
 spawn Panel(r)
 
 pin hand = tasks(1)     ;; somente 1 peça "na mão" por vez
 set HAND = hand         ;; torna mão uma global
 
-func Piece (this) {
-    val check = func (c, l) {
-        ifs {
-            (c < 0) || (c >= w) => false
-            (l < 0) || (l >= h) => false
-            else => {
-                val up = (l > 0)     && MAP[l][c+1]
-                val dn = (l < (h-1)) && MAP[l+2][c+1]
-                ifs {
-                    (up && (up.img == art.pipe.straight)) => false
-                    (dn && (dn.img == art.pipe.straight)) => false
-                    else => true
-                }
+func conn_up_dn (up, dn) {
+    var n = 0
+    set n = n + match up.img {
+        art.pipe.straight => if (up.rot==90) || (up.rot==270) => 1 => 0
+        art.pipe.curve    => if (up.rot==90) || (up.rot==180) => 1 => 0
+    }
+    set n = n + match dn.img {
+        art.pipe.straight => if (dn.rot==90) || (dn.rot==270) => 1 => 0
+        art.pipe.curve    => if (dn.rot== 0) || (dn.rot==270) => 1 => 0
+    }
+    (n != 1)
+}
+
+func check (this, c, l) {
+    ifs {
+        (c < 0) || (c >= w) => false    ;; out of screen
+        (l < 0) || (l >= h) => false    ;; out of screen
+        MAP[l+1][c+1]       => false    ;; existing piece
+        else => {
+            val up = (l > 0)     && MAP[l][c+1]     ;; piece on each
+            val dn = (l < (h-1)) && MAP[l+2][c+1]   ;; direction
+            val le = (c > 0)     && MAP[l+1][c]
+            val ri = (c < (w-1)) && MAP[l+1][c+2]
+            ifs {
+                (up && !conn_up_dn(up, this)) => false
+                (dn && !conn_up_dn(this, dn)) => false
+                else => true
             }
         }
     }
+}
+
+func Piece (this) {
     watching :mouse.button.dn, :right {
         spawn {
             val no = pico.color.red -> X.copy
@@ -91,7 +107,7 @@ func Piece (this) {
                 pico.zet.anchor.pos(:top, :left)
                 pico.zet.rotate(this.rot)
                 pico.output.draw.buffer(pos, this.img)
-                if !check(lc.c, lc.l) {
+                if !check(this, lc.c, lc.l) {
                     pico.zet.color.draw(no)
                     pico.output.draw.rect @{
                         x=pos.x, y=pos.y, w=R, h=R
@@ -106,13 +122,13 @@ func Piece (this) {
             val e = watching @.200 {
                 await(:mouse.button.dn, :left)
                 val lc = pico.get.mouse() -> pos_lc
-                if check(lc.c, lc.l) {
+                if check(this, lc.c, lc.l) {
                     set MAP[lc.l+1][lc.c+1] = this
                     return()  ;; piece placed
                 }
             }
             if e == :clock {
-                set this.rot = this.rot + 90
+                set this.rot = (this.rot + 90) % 360
             }
         }
     }
