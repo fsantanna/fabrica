@@ -117,9 +117,7 @@ func check (this, c, l) {
                 val n2 = if dn => conn_up_dn(this, dn) => 0
                 val n3 = if le => conn_le_ri(le, this) => 0
                 val n4 = if ri => conn_le_ri(this, ri) => 0
-                (n1 != 1) && (n2 != 1) && (n3 != 1) && (n4 != 1) && (
-                    (n1+n2+n3+n4) <= 2
-                )
+                (this !? :pipe) || ((n1+n2+n3+n4) == 2)
             }
         }
     }
