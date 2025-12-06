@@ -1,5 +1,60 @@
 val pico  = require "pico"
 
+func _cycle_ (fst, me, l, c) {
+    ifs {
+        (c < 0) || (c == w) => false
+        (l < 0) || (l == h) => false
+        !fst && (me.l==l) && (me.c==c) => true
+        else => {
+            val cur = MAP[l+1][c+1]
+            match cur {
+                nil => false
+                :machine => (
+                    _cycle_(false, me, l-1, c) ||
+                    _cycle_(false, me, l+1, c) ||
+                    _cycle_(false, me, l, c-1) ||
+                    _cycle_(false, me, l, c+1)
+                )
+                :pipe.line => match cur.rot {
+                    \{ (it==0) || (it==180) } => (
+                        _cycle_(false, me, l, c-1) ||
+                        _cycle_(false, me, l, c+1)
+                    )
+                    \{ (it==90) || (it==270) } => (
+                        _cycle_(false, me, l-1, c) ||
+                        _cycle_(false, me, l-1, c)
+                    )
+                }
+                :pipe.curve => match cur.rot {
+                    0 => (
+                        _cycle_(false, me, l-1, c) ||
+                        _cycle_(false, me, l, c+1)
+                    )
+                    90 => (
+                        _cycle_(false, me, l+1, c) ||
+                        _cycle_(false, me, l, c+1)
+                    )
+                    180 => (
+                        _cycle_(false, me, l, c-1) ||
+                        _cycle_(false, me, l+1, c)
+                    )
+                    270 => (
+                        _cycle_(false, me, l-1, c) ||
+                        _cycle_(false, me, l, c-1)
+                    )
+                }
+            }
+        }
+    }
+}
+
+func cycle (this, l, c) {
+    match this {
+        :machine => false
+        :pipe    => _cycle_(true, me, l, c)
+    }
+}
+
 func conn_up_dn (up, dn) {
     var n = 0
     set n = n + match up {
@@ -30,7 +85,7 @@ func conn_le_ri (le, ri) {
     n
 }
 
-func bounds (this, c, l) {
+func bounds (this, l, c) {
     match this {
         :machine   => true
         :pipe.line => match this.rot {
@@ -53,7 +108,8 @@ func check (this, c, l) {
         (c < 0) || (c >= w) => false    ;; out of screen
         (l < 0) || (l >= h) => false    ;; out of screen
         MAP[l+1][c+1]       => false    ;; existing piece
-        !bounds(this, c, l) => false    ;; connections in the bounds
+        !bounds(this, l, c) => false    ;; connections in the bounds
+        cycle(this, l, c)   => false    ;; cycle detected
         else => {
             val up = (l > 0)     && MAP[l][c+1]     ;; piece on each
             val dn = (l < (h-1)) && MAP[l+2][c+1]   ;; direction
@@ -105,6 +161,8 @@ func Float (this) {
                 await(:mouse.button.dn, :left)
                 val lc = pico.get.mouse() -> pos_lc
                 if check(this, lc.c, lc.l) {
+                    set this.l = lc.l
+                    set this.c = lc.c
                     set MAP[lc.l+1][lc.c+1] = this
                     return()  ;; piece placed
                 }
