@@ -1,5 +1,6 @@
-val pico = require "pico"
-val art  = require "art"
+val pico  = require "pico"
+val art   = require "art"
+val Float = require "float"
 
 func Tile (tag, pos, img) {
     par {
@@ -12,7 +13,7 @@ func Tile (tag, pos, img) {
             val m = await(:mouse.button.dn, :left, \{pico.vs.pos_rect(it,rect)})
             watching @.200 {
                 await(:mouse.button.dn, :left, \{pico.vs.pos_rect(it,rect)})
-                spawn [HAND] Piece @{ tag=tag, img=img, rot=0 }
+                spawn [HAND] Float @{ tag=tag, img=img, rot=0 }
             }
         }
     }
