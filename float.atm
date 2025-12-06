@@ -30,11 +30,30 @@ func conn_le_ri (le, ri) {
     n
 }
 
+func bounds (this, c, l) {
+    match this {
+        :machine   => true
+        :pipe.line => match this.rot {
+            0   => (c >= 1) && (c <= (w-2))
+            180 => (c >= 1) && (c <= (w-2))
+            90  => (l >= 1) && (l <= (h-2))
+            270 => (l >= 1) && (l <= (h-2))
+        }
+        :pipe.curve => match this.rot {
+            0   => (l >= 1)     && (c <= (w-2))
+            90  => (l <= (h-2)) && (c <= (w-2))
+            180 => (c >= 1)     && (l <= (h-2))
+            270 => (c >= 1)     && (l >= 1)
+        }
+    }
+}
+
 func check (this, c, l) {
     ifs {
         (c < 0) || (c >= w) => false    ;; out of screen
         (l < 0) || (l >= h) => false    ;; out of screen
         MAP[l+1][c+1]       => false    ;; existing piece
+        !bounds(this, c, l) => false    ;; connections in the bounds
         else => {
             val up = (l > 0)     && MAP[l][c+1]     ;; piece on each
             val dn = (l < (h-1)) && MAP[l+2][c+1]   ;; direction
