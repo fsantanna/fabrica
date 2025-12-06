@@ -28,8 +28,10 @@ func Panel (r) {
             pico.output.clear()
         }
     } with {
-        spawn Tile(:machine,    pico.pos(@{x=25,y=50}, r), art.machine)
-        spawn Tile(:pipe.line,  pico.pos(@{x=50,y=50}, r), art.pipe.line)
+        spawn Tile(:input,      pico.pos(@{x=15,y=50}, r), art.input)
+        spawn Tile(:output,     pico.pos(@{x=30,y=50}, r), art.output)
+        spawn Tile(:machine,    pico.pos(@{x=45,y=50}, r), art.machine)
+        spawn Tile(:pipe.line,  pico.pos(@{x=60,y=50}, r), art.pipe.line)
         spawn Tile(:pipe.curve, pico.pos(@{x=75,y=50}, r), art.pipe.curve)
         await(false)
     } with {
