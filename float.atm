@@ -1,58 +1,111 @@
 val pico  = require "pico"
 
-func _cycle_ (fst, me, l, c) {
-    ifs {
-        (c < 0) || (c == w) => false
-        (l < 0) || (l == h) => false
-        !fst && (me.l==l) && (me.c==c) => true
-        else => {
-            val cur = MAP[l+1][c+1]
-            match cur {
-                nil => false
-                :machine => (
-                    _cycle_(false, me, l-1, c) ||
-                    _cycle_(false, me, l+1, c) ||
-                    _cycle_(false, me, l, c-1) ||
-                    _cycle_(false, me, l, c+1)
-                )
-                :pipe.line => match cur.rot {
-                    \{ (it==0) || (it==180) } => (
-                        _cycle_(false, me, l, c-1) ||
-                        _cycle_(false, me, l, c+1)
-                    )
-                    \{ (it==90) || (it==270) } => (
-                        _cycle_(false, me, l-1, c) ||
-                        _cycle_(false, me, l-1, c)
-                    )
-                }
-                :pipe.curve => match cur.rot {
-                    0 => (
-                        _cycle_(false, me, l-1, c) ||
-                        _cycle_(false, me, l, c+1)
-                    )
-                    90 => (
-                        _cycle_(false, me, l+1, c) ||
-                        _cycle_(false, me, l, c+1)
-                    )
-                    180 => (
-                        _cycle_(false, me, l, c-1) ||
-                        _cycle_(false, me, l+1, c)
-                    )
-                    270 => (
-                        _cycle_(false, me, l-1, c) ||
-                        _cycle_(false, me, l, c-1)
-                    )
-                }
-            }
+func ends (this) {
+    val aux = func (l, c) {
+        ifs {
+            (c < 0) || (c == w) => @{}
+            (l < 0) || (l == h) => @{}
+            else => MAP[l+1][c+1] -> \{ if it => @{it} => @{} }
+        }
+    }
+    val l, c = (this.l, this.c)
+    match this {
+        :machine => aux(l-1,c) ++ aux(l+1,c) ++ aux(l,c-1) ++ aux(l,c+1)
+        :pipe.line => match this.rot {
+            0   => aux(l,c-1) ++ aux(l,c+1)
+            180 => aux(l,c-1) ++ aux(l,c+1)
+            90  => aux(l-1,c) ++ aux(l+1,c)
+            270 => aux(l-1,c) ++ aux(l+1,c)
+        }
+        :pipe.curve => match this.rot {
+            0   => aux(l-1,c) ++ aux(l,c+1)
+            90  => aux(l+1,c) ++ aux(l,c+1)
+            180 => aux(l,c-1) ++ aux(l+1,c)
+            270 => aux(l-1,c) ++ aux(l,c-1)
         }
     }
 }
 
+test {
+    set w = 3
+    set h = 3
+
+    set v00 = :machine    @{ l=0, c=0, rot=0   }
+    set v01 = :pipe.line  @{ l=0, c=1, rot=0   }
+    set v02 = :pipe.curve @{ l=0, c=2, rot=180 }
+
+    set v10 = :pipe.curve @{ l=1, c=0, rot=0   }
+    set v11 = :pipe.curve @{ l=1, c=1, rot=180 }
+    set v12 = :pipe.line  @{ rot=90 } ;; not in MAP
+
+    set v21 = :machine    @{ l=2, c=1, rot=0 }
+    set v22 = :pipe.curve @{ l=2, c=2, rot=270 }
+
+    set MAP = @{
+        @{ v00, v01, v02 },
+        @{ v10, v11, nil },
+        @{ nil, v21, v22 },
+    }
+
+    do {    ;; v00
+        val x,y = v00->ends() --> table.unpack
+        assert((x == v10) && (y == v01))
+    }
+    do {    ;; v01
+        val x,y = v01->ends() --> table.unpack
+        assert((x == v00) && (y == v02))
+    }
+    do {    ;; v11
+        val x,y = v11->ends() --> table.unpack
+        assert((x == v10) && (y == v21))
+    }
+    do {    ;; v12
+        set v12.l = 1
+        set v12.c = 2
+        val x,y = v12->ends() --> table.unpack
+        assert((x == v02) && (y == v22))
+        set v12.l = nil
+        set v12.c = nil
+    }
+}
+
+func _cycle_ (src, cur, nxt) {
+    if src == nxt {
+        true
+    } else {
+        loop _,v in nxt->ends() {
+            if v != cur {
+                if _cycle_(src, nxt, v) {
+                    return(true)
+                }
+            }
+        }
+        false
+    }
+}
+
+;; Ensures that the (max) two endpoints of `this` are not connected.
+
 func cycle (this, l, c) {
+    set this.l = l
+    set this.c = c
+    defer {
+        set this.l = nil
+        set this.c = nil
+    }
     match this {
         :machine => false
-        :pipe    => _cycle_(true, me, l, c)
+        :pipe    => {
+            val src, dst = this->ends() --> table.unpack
+            (dst != nil) && _cycle_(src, nil, dst)
+        }
     }
+}
+
+test {
+    _cycle_(v00, nil, v00) --> assert
+    _cycle_(v02, nil, v00) --> assert
+    cycle(v12, 1, 2) --> assert
 }
 
 func conn_up_dn (up, dn) {
