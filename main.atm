@@ -4,14 +4,14 @@ set X     = require "atmos.x"
 val pico  = require "pico"
 val Panel = require "panel"
 
-set R = 6
-set w = 15
-set h = 15
-set W = R*w
-set H = R*(h+2)
+set R = 6           ;; tile dimensions in pixels
+set w = 15          ;; map max number of tiles in X
+set h = 15          ;; map max number of tiles in Y
+val W = R*w         ;; window has w/h tiles
+val H = R*(h+2)     ;; (+ panel region at the bottom)
 
 pico.zet.title("Fábrica");
-pico.zet.dim.window(R*W, R*H)
+pico.zet.dim.window(5*W, 5*H)   ;; 5 = pixel size
 pico.zet.dim.world(W, H)
 pico.zet.expert(true);
 
@@ -29,11 +29,21 @@ func lc_pos (lc) {
     }
 }
 
+;;;
+Tile = @{
+    tag = (:machine | :pipe.line | :pipe.curve),
+    l   = l,        ;; line
+    c   = c,        ;; column
+    img = art.*,    ;; art buffer
+    rot = degrees,  ;; rotation
+}
+;;;
+
 set MAP = @{}
 loop l in h {
     set MAP[l] = @{}
     loop c in w {
-        set MAP[l][c] = nil     ;; { tag=:tag, img=buffer, rot=degrees }
+        set MAP[l][c] = nil
     }
 }
 
