@@ -177,11 +177,11 @@ func check (this, c, l) {
             if mm {
                 false   ;; machine <-> machine
             } else {
-                val n1 = if up => conn_up_dn(up, this) => 0
-                val n2 = if dn => conn_up_dn(this, dn) => 0
-                val n3 = if le => conn_le_ri(le, this) => 0
-                val n4 = if ri => conn_le_ri(this, ri) => 0
-                (this !? :pipe) || ((n1+n2+n3+n4) >= 2)
+                val n1 = if up => conn_up_dn(up, this)//2 => 0
+                val n2 = if dn => conn_up_dn(this, dn)//2 => 0
+                val n3 = if le => conn_le_ri(le, this)//2 => 0
+                val n4 = if ri => conn_le_ri(this, ri)//2 => 0
+                (this !? :pipe) || ((n1+n2+n3+n4) >= 1)
             }
         }
     }
