@@ -28,9 +28,9 @@ func Panel (r) {
             pico.output.clear()
         }
     } with {
-        spawn Tile(:machine,       pico.pos(@{x=25,y=50}, r), art.machine)
-        spawn Tile(:pipe.straight, pico.pos(@{x=50,y=50}, r), art.pipe.straight)
-        spawn Tile(:pipe.curve,    pico.pos(@{x=75,y=50}, r), art.pipe.curve)
+        spawn Tile(:machine,    pico.pos(@{x=25,y=50}, r), art.machine)
+        spawn Tile(:pipe.line,  pico.pos(@{x=50,y=50}, r), art.pipe.line)
+        spawn Tile(:pipe.curve, pico.pos(@{x=75,y=50}, r), art.pipe.curve)
         await(false)
     } with {
         every :draw {

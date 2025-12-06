@@ -14,7 +14,7 @@ val B = pico.color.black
         @{ x, x, B, B, x, x },
     },
     pipe = @{
-        straight = @{
+        line = @{
             @{ x, x, x, x, x, x },
             @{ x, _, _, _, _, x },
             @{ B, B, B, B, B, B },
