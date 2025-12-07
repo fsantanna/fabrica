@@ -70,7 +70,7 @@ spawn {
 val r = @{ x=W/2, y=H-(1.5*R), w=W, h=3*R }
 spawn Panel(r)
 
-pin hand = tasks(1)     ;; somente 1 peça "na mão" por vez
-set HAND = hand         ;; torna mão uma global
+pin hand = tasks(1)     ;; only 1 tile at hand
+set HAND = hand         ;; make HAND a global
 
 await(false)
