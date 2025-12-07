@@ -133,8 +133,8 @@ func conn_up_dn (up, dn) {
         :machine    => 1
         :pipe.line  => (dn.rot==90) || (dn.rot==270)
         :pipe.curve => (dn.rot== 0) || (dn.rot==270)
-        :io.input   => (up.rot == 270)
-        :io.output  => (up.rot == 90)
+        :io.input   => (dn.rot == 270)
+        :io.output  => (dn.rot == 90)
     }
     (xup && xdn)
 }
@@ -144,15 +144,15 @@ func conn_le_ri (le, ri) {
         :machine    => true
         :pipe.line  => (le.rot==0) || (le.rot==180)
         :pipe.curve => (le.rot==0) || (le.rot== 90)
-        :io.input   => (up.rot == 0)
-        :io.output  => (up.rot == 180)
+        :io.input   => (le.rot == 0)
+        :io.output  => (le.rot == 180)
     }
     val xri = match ri {
         :machine    => true
-        :pipe.line  => (le.rot==  0) || (le.rot==180)
+        :pipe.line  => (ri.rot==  0) || (ri.rot==180)
         :pipe.curve => (ri.rot==180) || (ri.rot==270)
-        :io.input   => (up.rot == 180)
-        :io.output  => (up.rot == 0)
+        :io.input   => (ri.rot == 180)
+        :io.output  => (ri.rot == 0)
     }
     (xle && xri)
 }
@@ -172,6 +172,16 @@ func bounds (this, l, c) {
             180 => (c >= 1)     && (l <= (h-2))
             270 => (c >= 1)     && (l >= 1)
         }
+        :io => true ;; never open
+    }
+}
+
+func compat (v1, v2) {
+    ifs {
+        (v1 ?? :machine) => true
+        (v2 ?? :machine) => true
+        (v1 ?? :pipe)    => (v2 ?? :pipe)
+        else             => false
     }
 }
 
@@ -182,25 +192,18 @@ func check (this, c, l) {
         MAP[l+1][c+1]       => false    ;; existing piece
         !bounds(this, l, c) => false    ;; connections in the bounds
         cycle(this, l, c)   => false    ;; cycle detected
+        (this ?? :machine)  => true     ;; no connection required
         else => {
             val up = (l > 0)     && MAP[l][c+1]     ;; piece on each
             val dn = (l < (h-1)) && MAP[l+2][c+1]   ;; direction
             val le = (c > 0)     && MAP[l+1][c]
             val ri = (c < (w-1)) && MAP[l+1][c+2]
-            val mm = (this ?? :machine) && (
-                (up ?? :machine) ||
-                (dn ?? :machine) ||
-                (le ?? :machine) ||
-                (ri ?? :machine)
-            )
-            if mm {
-                false   ;; machine <-> machine
-            } else {
-                val n1 = up && conn_up_dn(up,this)
-                val n2 = dn && conn_up_dn(this,dn)
-                val n3 = le && conn_le_ri(le,this)
-                val n4 = ri && conn_le_ri(this,ri)
-                (this !? :pipe) || (n1||n2||n3||n4)
+            ifs {
+                up && compat(this,up) && conn_up_dn(up,this) => true
+                dn && compat(this,dn) && conn_up_dn(this,dn) => true
+                le && compat(this,le) && conn_le_ri(le,this) => true
+                ri && compat(this,ri) && conn_le_ri(this,ri) => true
+                else => false
             }
         }
     }
