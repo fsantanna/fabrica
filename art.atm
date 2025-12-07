@@ -1,8 +1,42 @@
+val X = require "atmos.x"
 val pico = require "pico"
 
 val _ = pico.color.white
 val x = pico.color.gray
 val B = pico.color.black
+
+func paint (buf, clr) {
+    val ret = @{}
+    loop l,L in buf {
+        set ret[l] = @{}
+        loop c,v in L {
+            set ret[l][c] = v
+        }
+    }
+    loop _,L in ret {
+        loop c,v in L {
+            if v == B {
+                set L[c] = clr
+            }
+        }
+    }
+    ret
+}
+
+test {
+    val R = pico.color.red
+    val buf1 = @{
+        @{ _, x, B, x, _},
+        @{ _, x, B, x, _},
+    }
+    val buf2 = buf1->paint(R)
+    val buf3 = @{
+        @{ _, x, R, x, _},
+        @{ _, x, R, x, _},
+    }
+    assert(buf1 =!= buf2)
+    assert(buf2 === buf3)
+}
 
 @{
     machine = @{
