@@ -34,8 +34,8 @@ func Panel (r) {
             pico.output.draw.rect(ps)
         }
     } with {
-        spawn Tile(:input,      pico.pos(@{x=33,y=50}, io), art.input)
-        spawn Tile(:output,     pico.pos(@{x=67,y=50}, io), art.output)
+        spawn Tile(:io.input,   pico.pos(@{x=33,y=50}, io), art.io.input)
+        spawn Tile(:io.output,  pico.pos(@{x=67,y=50}, io), art.io.output)
         spawn Tile(:machine,    pico.pos(@{x=50,y=50}, r),  art.machine)
         spawn Tile(:pipe.line,  pico.pos(@{x=33,y=50}, ps), art.pipe.line)
         spawn Tile(:pipe.curve, pico.pos(@{x=67,y=50}, ps), art.pipe.curve)

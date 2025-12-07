@@ -23,6 +23,18 @@ func ends (this) {
             180 => aux(l,c-1) ++ aux(l+1,c)
             270 => aux(l-1,c) ++ aux(l,c-1)
         }
+        :io.input => match this.rot {
+            0   => aux(l,c+1)
+            90  => aux(l+1,c)
+            180 => aux(l,c-1)
+            270 => aux(l-1,c)
+        }
+        :io.output => match this.rot {
+            0   => aux(l,c-1)
+            90  => aux(l-1,c)
+            180 => aux(l,c+1)
+            270 => aux(l+1,c)
+        }
     }
 }
 
@@ -95,6 +107,7 @@ func cycle (this, l, c) {
     }
     match this {
         :machine => false
+        :io      => false
         :pipe    => {
             val src, dst = this->ends() --> table.unpack
             (dst != nil) && _cycle_(src, nil, dst)
@@ -114,11 +127,15 @@ func conn_up_dn (up, dn) {
         :machine    => 1
         :pipe.line  => if (up.rot==90) || (up.rot==270) => 1 => 0
         :pipe.curve => if (up.rot==90) || (up.rot==180) => 1 => 0
+        :io.input   => if (up.rot == 90)  1 => 0
+        :io.output  => if (up.rot == 270) 1 => 0
     }
     set n = n + match dn {
         :machine    => 1
         :pipe.line  => if (dn.rot==90) || (dn.rot==270) => 1 => 0
         :pipe.curve => if (dn.rot== 0) || (dn.rot==270) => 1 => 0
+        :io.input   => if (up.rot == 270) 1 => 0
+        :io.output  => if (up.rot == 90)  1 => 0
     }
     n
 }
@@ -129,11 +146,15 @@ func conn_le_ri (le, ri) {
         :machine    => 1
         :pipe.line  => if (le.rot==0) || (le.rot==180) => 1 => 0
         :pipe.curve => if (le.rot==0) || (le.rot== 90) => 1 => 0
+        :io.input   => if (up.rot == 0)   1 => 0
+        :io.output  => if (up.rot == 180) 1 => 0
     }
     set n = n + match ri {
         :machine    => 1
         :pipe.line  => if (le.rot==  0) || (le.rot==180) => 1 => 0
         :pipe.curve => if (ri.rot==180) || (ri.rot==270) => 1 => 0
+        :io.input   => if (up.rot == 180) 1 => 0
+        :io.output  => if (up.rot == 0)   1 => 0
     }
     n
 }

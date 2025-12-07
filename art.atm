@@ -13,21 +13,23 @@ val B = pico.color.black
         @{ x, B, B, B, B, x },
         @{ x, x, B, B, x, x },
     },
-    input = @{
-        @{ x, x, x, x, x, x },
-        @{ x, _, _, _, B, x },
-        @{ x, _, B, B, B, B },
-        @{ x, _, B, B, B, B },
-        @{ x, _, _, _, B, x },
-        @{ x, x, x, x, x, x },
-    },
-    output = @{
-        @{ x, x, x, x, x, x },
-        @{ x, _, B, _, _, x },
-        @{ B, B, B, B, _, x },
-        @{ B, B, B, B, _, x },
-        @{ x, _, B, _, _, x },
-        @{ x, x, x, x, x, x },
+    io = @{
+        input = @{
+            @{ x, x, x, x, x, x },
+            @{ x, _, _, _, B, x },
+            @{ x, _, B, B, B, B },
+            @{ x, _, B, B, B, B },
+            @{ x, _, _, _, B, x },
+            @{ x, x, x, x, x, x },
+        },
+        output = @{
+            @{ x, x, x, x, x, x },
+            @{ x, _, B, _, _, x },
+            @{ B, B, B, B, _, x },
+            @{ B, B, B, B, _, x },
+            @{ x, _, B, _, _, x },
+            @{ x, x, x, x, x, x },
+        },
     },
     pipe = @{
         line = @{
