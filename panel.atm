@@ -20,19 +20,25 @@ func Tile (tag, pos, img) {
 }
 
 func Panel (r) {
+    val io = pico.rect(@{x=25,y=50}, @{x=30,y=80}, r)
+    val ps = pico.rect(@{x=75,y=50}, @{x=30,y=80}, r)
     par {
         every :draw {
             pico.zet.clip(r)
             pico.zet.color.clear(pico.color.white)
             ;;pico.push @{}
             pico.output.clear()
+            pico.zet.style(:stroke)
+            pico.zet.color.draw(pico.color.black)
+            pico.output.draw.rect(io)
+            pico.output.draw.rect(ps)
         }
     } with {
-        spawn Tile(:input,      pico.pos(@{x=15,y=50}, r), art.input)
-        spawn Tile(:output,     pico.pos(@{x=30,y=50}, r), art.output)
-        spawn Tile(:machine,    pico.pos(@{x=45,y=50}, r), art.machine)
-        spawn Tile(:pipe.line,  pico.pos(@{x=60,y=50}, r), art.pipe.line)
-        spawn Tile(:pipe.curve, pico.pos(@{x=75,y=50}, r), art.pipe.curve)
+        spawn Tile(:input,      pico.pos(@{x=33,y=50}, io), art.input)
+        spawn Tile(:output,     pico.pos(@{x=67,y=50}, io), art.output)
+        spawn Tile(:machine,    pico.pos(@{x=50,y=50}, r),  art.machine)
+        spawn Tile(:pipe.line,  pico.pos(@{x=33,y=50}, ps), art.pipe.line)
+        spawn Tile(:pipe.curve, pico.pos(@{x=67,y=50}, ps), art.pipe.curve)
         await(false)
     } with {
         every :draw {
