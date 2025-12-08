@@ -67,7 +67,7 @@ loop l in h {
     }
 }
 
-set PLAYERS = @{
+set JOGS = @{
     active = nil,
     @{
         clr = :blue,
@@ -114,11 +114,9 @@ spawn Panel(r)
 pin hand = tasks(1)     ;; only 1 tile at hand
 set HAND = hand         ;; make HAND a global
 
-loop i in #PLAYERS {
-    val p = PLAYERS[i]
-    set PLAYERS.active = i
-    await Start(p)
+loop i in #JOGS {
+    await Start(JOGS[i])
 }
-set PLAYERS.active = 1
+set JOGS.active = 1
 
 await(false)
