@@ -73,12 +73,12 @@ test {
         assert((x == v10) && (y == v21))
     }
     do {    ;; v12
-        set v12.l = 1
-        set v12.c = 2
+        set v12.lc.l = 1
+        set v12.lc.c = 2
         val x,y = v12->ends() --> table.unpack
         assert((x == v02) && (y == v22))
-        set v12.l = nil
-        set v12.c = nil
+        set v12.lc.l = nil
+        set v12.lc.c = nil
     }
 }
 
@@ -99,12 +99,10 @@ val func _cycle_ (src, cur, nxt) {
 
 ;; Ensures that the (max) two endpoints of `this` are not connected.
 
-val func cycle (this, l, c) {
-    set this.l = l
-    set this.c = c
+val func cycle (this, lc) {
+    set this.lc = lc
     defer {
-        set this.l = nil
-        set this.c = nil
+        set this.lc = nil
     }
     match this {
         :machine => false
@@ -158,20 +156,20 @@ val func conn_le_ri (le, ri) {
     (xle && xri)
 }
 
-val func bounds (this, l, c) {
+val func bounds (this, lc) {
     match this {
         :machine   => true
         :pipe.line => match this.rot {
-            0   => (c >= 1) && (c <= (w-2))
-            180 => (c >= 1) && (c <= (w-2))
-            90  => (l >= 1) && (l <= (h-2))
-            270 => (l >= 1) && (l <= (h-2))
+            0   => (lc.c >= 1) && (lc.c <= (w-2))
+            180 => (lc.c >= 1) && (lc.c <= (w-2))
+            90  => (lc.l >= 1) && (lc.l <= (h-2))
+            270 => (lc.l >= 1) && (lc.l <= (h-2))
         }
         :pipe.curve => match this.rot {
-            0   => (l >= 1)     && (c <= (w-2))
-            90  => (l <= (h-2)) && (c <= (w-2))
-            180 => (c >= 1)     && (l <= (h-2))
-            270 => (c >= 1)     && (l >= 1)
+            0   => (lc.l >= 1)     && (lc.c <= (w-2))
+            90  => (lc.l <= (h-2)) && (lc.c <= (w-2))
+            180 => (lc.c >= 1)     && (lc.l <= (h-2))
+            270 => (lc.c >= 1)     && (lc.l >= 1)
         }
         :io => true ;; never open
     }
@@ -186,20 +184,20 @@ val func compat (v1, v2) {
     }
 }
 
-val func check (this, c, l) {
+val func check (this, lc) {
     ifs {
-        (c < 0) || (c >= w) => false    ;; out of screen
-        (l < 0) || (l >= h) => false    ;; out of screen
-        MAP[l+1][c+1]       => false    ;; existing piece
-        !bounds(this, l, c) => false    ;; connections in the bounds
-        cycle(this, l, c)   => false    ;; cycle detected
+        (lc.c < 0) || (lc.c >= w) => false    ;; out of screen
+        (lc.l < 0) || (lc.l >= h) => false    ;; out of screen
+        MAP[lc.l+1][lc.c+1]       => false    ;; existing piece
+        !bounds(this, lc) => false    ;; connections in the bounds
+        cycle(this, lc)   => false    ;; cycle detected
         (this ?? :machine)  => true     ;; no connection required
         (this ?? :io.output) && (this.picker.i == -1) => false ;; pending color
         else => {
-            val up = (l > 0)     && MAP[l][c+1]     ;; piece on each
-            val dn = (l < (h-1)) && MAP[l+2][c+1]   ;; direction
-            val le = (c > 0)     && MAP[l+1][c]
-            val ri = (c < (w-1)) && MAP[l+1][c+2]
+            val up = (lc.l > 0)     && MAP[lc.l][lc.c+1]     ;; piece on each
+            val dn = (lc.l < (h-1)) && MAP[lc.l+2][lc.c+1]   ;; direction
+            val le = (lc.c > 0)     && MAP[lc.l+1][lc.c]
+            val ri = (lc.c < (w-1)) && MAP[lc.l+1][lc.c+2]
             ifs {
                 up && compat(this,up) && conn_up_dn(up,this) => true
                 dn && compat(this,dn) && conn_up_dn(this,dn) => true
@@ -240,7 +238,7 @@ val func Float (this) {
                 pico.zet.anchor.pos(:top, :left)
                 pico.zet.rotate(this.rot)
                 pico.output.draw.buffer(pos, this.img)
-                if !check(this, lc.c, lc.l) {
+                if !check(this,lc) {
                     pico.zet.color.draw(no)
                     pico.zet.style(:stroke)
                     pico.output.draw.rect @{
@@ -267,9 +265,8 @@ val func Float (this) {
                     }
                     2 => {
                         val lc = pico.get.mouse() -> pos_lc
-                        if check(this, lc.c, lc.l) {
-                            set this.l = lc.l
-                            set this.c = lc.c
+                        if check(this,lc) {
+                            set this.lc = lc
                             set MAP[lc.l+1][lc.c+1] = this
                             if this.clr == :picker {
                                 set this.clr = this.picker[this.picker.i+1].clr
