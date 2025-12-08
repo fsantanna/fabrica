@@ -19,8 +19,10 @@ func Tile (tag, pos, img) {
         }
     } with {
         var rect = @{ x=pos.x, y=pos.y, w=R, h=R }
-        await Double_Click(:left, \{pico.vs.pos_rect(it,rect)})
-        spawn [HAND] Float @{ tag=tag, img=img, rot=0, clr=colors[tag] }
+        loop {
+            await Double_Click(:left, \{pico.vs.pos_rect(it,rect)})
+            spawn [HAND] Float @{ tag=tag, img=img, rot=0, clr=colors[tag] }
+        }
     }
 }
 
