@@ -5,9 +5,7 @@ val _ = pico.color.white
 val x = pico.color.gray
 val B = pico.color.black
 
-val M = @{}
-
-func M.paint (buf, clr) {
+val paint = func (buf, clr) {
     val ret = @{}
     loop l,L in buf {
         set ret[l] = @{}
@@ -31,7 +29,7 @@ test {
         @{ _, x, B, x, _},
         @{ _, x, B, x, _},
     }
-    val buf2 = buf1->M.paint(R)
+    val buf2 = buf1->paint(R)
     val buf3 = @{
         @{ _, x, R, x, _},
         @{ _, x, R, x, _},
@@ -40,8 +38,15 @@ test {
     assert(buf2 === buf3)
 }
 
-set M.imgs = @{
-    machine = @{
+val players = func (buf) {
+    @{
+        black = buf,
+        red   = buf->paint(pico.color.red),
+    }
+}
+
+@{
+    machine = players <-- @{
         @{ x, x, B, B, x, x },
         @{ x, B, B, B, B, x },
         @{ B, B, _, _, B, B },
@@ -50,7 +55,7 @@ set M.imgs = @{
         @{ x, x, B, B, x, x },
     },
     io = @{
-        input = @{
+        input = players <-- @{
             @{ x, x, x, x, x, x },
             @{ x, _, _, _, B, x },
             @{ x, _, B, B, B, B },
@@ -58,7 +63,7 @@ set M.imgs = @{
             @{ x, _, _, _, B, x },
             @{ x, x, x, x, x, x },
         },
-        output = @{
+        output = players <-- @{
             @{ x, x, x, x, x, x },
             @{ x, _, B, _, _, x },
             @{ B, B, B, B, _, x },
@@ -68,7 +73,7 @@ set M.imgs = @{
         },
     },
     pipe = @{
-        line = @{
+        line = players <-- @{
             @{ x, x, x, x, x, x },
             @{ x, _, _, _, _, x },
             @{ B, B, B, B, B, B },
@@ -76,7 +81,7 @@ set M.imgs = @{
             @{ x, _, _, _, _, x },
             @{ x, x, x, x, x, x },
         },
-        curve = @{
+        curve = players <-- @{
             @{ x, x, B, B, x, x },
             @{ x, _, B, B, _, x },
             @{ x, _, B, B, B, B },
@@ -86,5 +91,3 @@ set M.imgs = @{
         },
     },
 }
-
-M

@@ -1,5 +1,4 @@
 val pico = require "pico"
-val art  = require "art"
 
 func ends (this) {
     val aux = func (l, c) {
@@ -211,7 +210,11 @@ func check (this, c, l) {
 }
 
 func Float (this) {
-    set this.img = this.img->art.paint(pico.color.red)
+    if this.clr == true {
+        set this.img = this.img.red
+    } else {
+        set this.img = this.img.black
+    }
     watching :mouse.button.dn, :right {
         spawn {
             val no = pico.color.red -> X.copy
