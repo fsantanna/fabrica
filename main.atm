@@ -15,6 +15,25 @@ pico.zet.dim.window(5*W, 5*H)   ;; 5 = pixel size
 pico.zet.dim.world(W, H)
 pico.zet.expert(true);
 
+func Clicks (but, f) {
+    val m = await(:mouse.button.dn, but, f)
+    watching @.200 {
+        await(:mouse.button.dn, but, \{ it.pos === m.pos })
+        return(2)
+    }
+    1
+}
+
+func Double_Click (but, f) {
+    loop {
+        val m = await(:mouse.button.dn, but, f)
+        watching @.200 {
+            await(:mouse.button.dn, but, \{ it.pos === m.pos })
+            return()
+        }
+    }
+}
+
 func pos_lc (pos) {
     @{
         l = pos.y // R,

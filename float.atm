@@ -236,19 +236,20 @@ func Float (this) {
             }
         }
         loop {
-            await(:mouse.button.dn, :left)
-            val e = watching @.200 {
-                await(:mouse.button.dn, :left)
-                val lc = pico.get.mouse() -> pos_lc
-                if check(this, lc.c, lc.l) {
-                    set this.l = lc.l
-                    set this.c = lc.c
-                    set MAP[lc.l+1][lc.c+1] = this
-                    return()  ;; piece placed
+            val n = await Clicks(:left)
+            match n {
+                1 => {
+                    set this.rot = (this.rot + 90) % 360
                 }
-            }
-            if e == :clock {
-                set this.rot = (this.rot + 90) % 360
+                2 => {
+                    val lc = pico.get.mouse() -> pos_lc
+                    if check(this, lc.c, lc.l) {
+                        set this.l = lc.l
+                        set this.c = lc.c
+                        set MAP[lc.l+1][lc.c+1] = this
+                        return()  ;; piece placed
+                    }
+                }
             }
         }
     }
