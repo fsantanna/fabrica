@@ -37,7 +37,6 @@ func Panel (r) {
             pico.zet.style(:stroke)
             pico.output.draw.rect(io)
             pico.output.draw.rect(ps)
-            pico.zet.style(:fill)
         }
     } with {
         spawn Tile(:io.input,   pico.pos(@{x=33,y=50}, io), art.imgs.io.input)

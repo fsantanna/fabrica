@@ -240,7 +240,6 @@ func Float (this) {
                     pico.output.draw.rect @{
                         x=pos.x, y=pos.y, w=R, h=R
                     }
-                    pico.zet.style(:fill)
                 }
                 pico.zet.rotate(0)
                 pico.zet.anchor.pos(:center, :middle)

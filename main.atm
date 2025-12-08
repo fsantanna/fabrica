@@ -77,7 +77,6 @@ spawn {
                 pico.zet.color.draw(pico.color.gray)
                 val r = @{ x=(c-1)*4*R, y=(l-1)*4*R, w=4*R, h=4*R }
                 pico.output.draw.rect(r)
-                pico.zet.style(:fill)
             }
         }
         loop l in h {
