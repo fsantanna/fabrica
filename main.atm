@@ -69,8 +69,8 @@ loop l in h {
 
 set PLAYERS = @{
     active = nil,
-    :blue, :brown,
-    ;; :white, :gray    ;; TODO: other colors?
+    :blue, :green,
+    ;; :brown, :white, :gray    ;; TODO: other colors?
 }
 
 math.randomseed()
@@ -107,7 +107,8 @@ spawn Panel(r)
 pin hand = tasks(1)     ;; only 1 tile at hand
 set HAND = hand         ;; make HAND a global
 
-loop i, c {
+loop i in #PLAYERS {
+    val c = PLAYERS[i]
     set PLAYERS.active = c
     await Start()
 }
