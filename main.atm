@@ -3,6 +3,7 @@ require "atmos.env.pico"
 set X     = require "atmos.x"
 val pico  = require "pico"
 val Panel = require "panel"
+val Start = require "start"
 
 set R = 6           ;; tile dimensions in pixels
 set w = 4*4         ;; map max number of tiles in X
@@ -66,6 +67,12 @@ loop l in h {
     }
 }
 
+set PLAYERS = @{
+    active = nil,
+    :blue, :brown,
+    ;; :white, :gray    ;; TODO: other colors?
+}
+
 math.randomseed()
 
 spawn {
@@ -99,5 +106,11 @@ spawn Panel(r)
 
 pin hand = tasks(1)     ;; only 1 tile at hand
 set HAND = hand         ;; make HAND a global
+
+loop i, c {
+    set PLAYERS.active = c
+    await Start()
+}
+set PLAYERS.active = PLAYERS[1]
 
 await(false)

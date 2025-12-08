@@ -1,0 +1,54 @@
+val pico = require "pico"
+val art  = require "art"
+
+val func check () {
+    true
+}
+
+val func Machine () {
+    val clr = PLAYERS.active
+    val this = @{
+        tag = :machine,
+        rot = 0,
+        clr = clr,
+        img = art.imgs.machine->art.paint(clr)
+    }
+    par {
+        val no = pico.color.red -> X.copy
+        set no.a = 0x88
+        every :draw {
+            val lc  = pico.get.mouse() -> pos_lc
+            val pos = lc -> lc_pos
+            pico.zet.anchor.pos(:top, :left)
+            pico.output.draw.buffer(pos, this.img)
+            if !check(this, lc.c, lc.l) {
+                pico.zet.color.draw(no)
+                pico.zet.style(:stroke)
+                pico.output.draw.rect @{
+                    x=pos.x, y=pos.y, w=R, h=R
+                }
+            }
+            pico.zet.anchor.pos(:center, :middle)
+        }
+    } with {
+        loop {
+            await Double_Click(:left)
+            val lc = pico.get.mouse() -> pos_lc
+            if check(this, lc.c, lc.l) {
+                set this.l = lc.l
+                set this.c = lc.c
+                set MAP[lc.l+1][lc.c+1] = this
+                return()  ;; piece placed
+            }
+        }
+    }
+}
+
+val func Start () {
+    val t = spawn [HAND] Machine()
+    await(t)
+    val t = spawn [HAND] Machine()
+    await(t)
+}
+
+Start
