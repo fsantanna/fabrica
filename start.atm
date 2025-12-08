@@ -1,18 +1,42 @@
 val pico = require "pico"
 val art  = require "art"
 
-val func check () {
-    true
+val func neighbours (new) {
+    val me = @{ l=new.l+1, c=new.c+1 }
+    val up = @{ l=me.l-1,  c=me.c    }
+    val dn = @{ l=me.l+1,  c=me.c    }
+    val le = @{ l=me.l,    c=me.c-1  }
+    val ri = @{ l=me.l,    c=me.c+1  }
+    ifs {
+        (me.l > 1) && MAP[up.l][up.c] => false
+        (me.l < w) && MAP[dn.l][dn.c] => false
+        (me.c > 1) && MAP[le.l][le.c] => false
+        (me.c < h) && MAP[ri.l][ri.c] => false
+        else => true
+    }
 }
 
-val func Machine (player) {
-    val this = @{
+val func check (jog, new) {
+    ifs {
+        (new.c < 0) || (new.c >= w) => false    ;; out of screen
+        (new.l < 0) || (new.l >= h) => false    ;; out of screen
+        MAP[new.l+1][new.c+1]       => false    ;; existing piece
+        !neighbours(new)            => false    ;; existing neighbours
+        (#jog.machines == 0)        => true
+        else => {
+            val old = jog.machines[=].lc
+            ((new.l//4) == (old.l//4)) && ((new.c//4) == (old.c//4))
+        }
+    }
+}
+
+val func Machine (jog) {
+    val tile = @{
         tag = :machine,
         rot = 0,
-        clr = player.clr,
-        img = art.imgs.machine->art.paint(pico.color[player.clr])
+        clr = jog.clr,
+        img = art.imgs.machine->art.paint(pico.color[jog.clr])
     }
-    set player.machines[+] = this
     par {
         val no = pico.color.red -> X.copy
         set no.a = 0x88
@@ -20,8 +44,8 @@ val func Machine (player) {
             val lc  = pico.get.mouse() -> pos_lc
             val pos = lc -> lc_pos
             pico.zet.anchor.pos(:top, :left)
-            pico.output.draw.buffer(pos, this.img)
-            if !check(this, lc.c, lc.l) {
+            pico.output.draw.buffer(pos, tile.img)
+            if !jog->check(lc) {
                 pico.zet.color.draw(no)
                 pico.zet.style(:stroke)
                 pico.output.draw.rect @{
@@ -34,21 +58,21 @@ val func Machine (player) {
         loop {
             await Double_Click(:left)
             val lc = pico.get.mouse() -> pos_lc
-            if check(this, lc.c, lc.l) {
-                set this.l = lc.l
-                set this.c = lc.c
-                set MAP[lc.l+1][lc.c+1] = this
+            if jog->check(lc) {
+                set tile.lc = lc
+                set MAP[lc.l+1][lc.c+1] = tile
+                set jog.machines[+] = tile
                 return()  ;; piece placed
             }
         }
     }
 }
 
-val func Start (player) {
-    val t = spawn [HAND] Machine(player)
+val func Start (jog) {
+    val t = spawn [HAND] Machine(jog)
     await(t)
     await @.1
-    val t = spawn [HAND] Machine(player)
+    val t = spawn [HAND] Machine(jog)
     await(t)
     await @.1
 }
