@@ -5,14 +5,14 @@ val func check () {
     true
 }
 
-val func Machine () {
-    val clr = PLAYERS.active
+val func Machine (player) {
     val this = @{
         tag = :machine,
         rot = 0,
-        clr = clr,
-        img = art.imgs.machine->art.paint(pico.color[clr])
+        clr = player.clr,
+        img = art.imgs.machine->art.paint(pico.color[player.clr])
     }
+    set player.machines[+] = this
     par {
         val no = pico.color.red -> X.copy
         set no.a = 0x88
@@ -44,11 +44,11 @@ val func Machine () {
     }
 }
 
-val func Start () {
-    val t = spawn [HAND] Machine()
+val func Start (player) {
+    val t = spawn [HAND] Machine(player)
     await(t)
     await @.1
-    val t = spawn [HAND] Machine()
+    val t = spawn [HAND] Machine(player)
     await(t)
     await @.1
 }

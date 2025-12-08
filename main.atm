@@ -69,7 +69,14 @@ loop l in h {
 
 set PLAYERS = @{
     active = nil,
-    :blue, :green,
+    @{
+        clr = :blue,
+        machines = @{},
+    },
+    @{
+        clr = :green,
+        machines = @{},
+    },
     ;; :brown, :white, :gray    ;; TODO: other colors?
 }
 
@@ -108,10 +115,10 @@ pin hand = tasks(1)     ;; only 1 tile at hand
 set HAND = hand         ;; make HAND a global
 
 loop i in #PLAYERS {
-    val c = PLAYERS[i]
-    set PLAYERS.active = c
-    await Start()
+    val p = PLAYERS[i]
+    set PLAYERS.active = i
+    await Start(p)
 }
-set PLAYERS.active = PLAYERS[1]
+set PLAYERS.active = 1
 
 await(false)
