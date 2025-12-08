@@ -226,7 +226,7 @@ func Float (this) {
 
     watching :key.dn, :Escape {
         par {
-            val no = pico.color.gray -> X.copy
+            val no = pico.color.red -> X.copy
             set no.a = 0x88
             every :draw {
                 val lc  = pico.get.mouse() -> pos_lc
@@ -236,9 +236,11 @@ func Float (this) {
                 pico.output.draw.buffer(pos, this.img)
                 if !check(this, lc.c, lc.l) {
                     pico.zet.color.draw(no)
+                    pico.zet.style(:stroke)
                     pico.output.draw.rect @{
                         x=pos.x, y=pos.y, w=R, h=R
                     }
+                    pico.zet.style(:fill)
                 }
                 pico.zet.rotate(0)
                 pico.zet.anchor.pos(:center, :middle)
