@@ -214,11 +214,17 @@ func check (this, c, l) {
 func Float (this) {
     set this.img = match this.clr {
         :black  => this.img
-        :player => this.img->art.paint(pico.color.red)  ;; TODO: player color
+        :player => {
+            set this.clr = PLAYERS.active
+            this.img->art.paint(pico.color[PLAYERS.active])
+        }
         else => {
             set this.picker = @{ i=-1 }      ;; -1: color picker unset (invalid)
             loop i,c in art.juices {
-                set this.picker[i] = this.img->art.paint(pico.color[c])
+                set this.picker[i] = @{
+                    clr = c,
+                    img = this.img->art.paint(pico.color[c]),
+                }
             }
             this.img
         }
@@ -249,7 +255,7 @@ func Float (this) {
                 loop {
                     await(:mouse.button.dn, :right)
                     set this.picker.i = (this.picker.i + 1) % #this.picker
-                    set this.img = this.picker[this.picker.i+1]
+                    set this.img = this.picker[this.picker.i+1].img
                 }
             }
         } with {
@@ -265,6 +271,9 @@ func Float (this) {
                             set this.l = lc.l
                             set this.c = lc.c
                             set MAP[lc.l+1][lc.c+1] = this
+                            if this.clr == :picker {
+                                set this.clr = this.picker[this.picker.i+1].clr
+                            }
                             return()  ;; piece placed
                         }
                     }
