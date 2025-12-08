@@ -53,7 +53,7 @@ Tile = @{
     tag = (:machine | :pipe.line | :pipe.curve),
     l   = l,        ;; line
     c   = c,        ;; column
-    img = art.*,    ;; art buffer
+    img = art.imgs.*,    ;; art buffer
     rot = degrees,  ;; rotation
 }
 ;;;
