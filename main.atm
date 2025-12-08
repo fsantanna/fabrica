@@ -5,8 +5,8 @@ val pico  = require "pico"
 val Panel = require "panel"
 
 set R = 6           ;; tile dimensions in pixels
-set w = 15          ;; map max number of tiles in X
-set h = 15          ;; map max number of tiles in Y
+set w = 4*4         ;; map max number of tiles in X
+set h = 4*4         ;; map max number of tiles in Y
 val W = R*w         ;; window has w/h tiles
 val H = R*(h+3)     ;; (+ panel region at the bottom)
 
@@ -70,19 +70,28 @@ math.randomseed()
 
 spawn {
     every :draw {
+        pico.zet.anchor.pos(:left, :top)
+        loop l in 4 {
+            loop c in 4 {
+                pico.zet.style(:stroke)
+                pico.zet.color.draw(pico.color.gray)
+                val r = @{ x=(c-1)*4*R, y=(l-1)*4*R, w=4*R, h=4*R }
+                pico.output.draw.rect(r)
+                pico.zet.style(:fill)
+            }
+        }
         loop l in h {
             loop c in w {
                 val t = MAP[l][c]
                 if t {
                     val pos = @{ l=l-1, c=c-1 } -> lc_pos
-                    pico.zet.anchor.pos(:left, :top)
                     pico.zet.rotate(t.rot)
                     pico.output.draw.buffer(pos, t.img)
                     pico.zet.rotate(0)
-                    pico.zet.anchor.pos(:center, :middle)
                 }
             }
         }
+        pico.zet.anchor.pos(:center, :middle)
     }
 }
 
