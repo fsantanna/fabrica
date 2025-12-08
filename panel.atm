@@ -3,13 +3,11 @@ val art   = require "art"
 val Float = require "float"
 
 val colors = @{
-    [:machine]     = true,
-    [:pipe.line]   = false,
-    [:pipe.curve]  = false,
-    [:pipe.input]  = false,
-    [:pipe.output] = @{
-        ...
-    },
+    [:machine]    = :player,
+    [:pipe.line]  = :black,
+    [:pipe.curve] = :black,
+    [:io.input]   = :black,
+    [:io.output]  = :pick,
 }
 
 func Tile (tag, pos, img) {

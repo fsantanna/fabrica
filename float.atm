@@ -210,13 +210,18 @@ func check (this, c, l) {
 }
 
 func Float (this) {
-    if this.clr == true {
-        set this.img = this.img.red
-    } else {
-        set this.img = this.img.black
+    set this.img = match this.clr {
+        :black  => this.img.black
+        :player => this.img.red     ;; TODO: player color
+        :pick   => {
+            set this.imgs = this.img
+            set this.clr = :black
+            this.imgs.black
+        }
     }
-    watching :mouse.button.dn, :right {
-        spawn {
+
+    watching :key.dn, :Escape {
+        par {
             val no = pico.color.red -> X.copy
             set no.a = 0x99
             every :draw {
@@ -234,20 +239,30 @@ func Float (this) {
                 pico.zet.rotate(0)
                 pico.zet.anchor.pos(:center, :middle)
             }
-        }
-        loop {
-            val n = await Clicks(:left)
-            match n {
-                1 => {
-                    set this.rot = (this.rot + 90) % 360
+        } with {
+            if this.clr == :pick {
+                
+                loop {
+                    await(:mouse.dn, :right)
+                    set this.clr = next(this.img, this.clr)
+                    set this.img = this.imgs[this.clr]
                 }
-                2 => {
-                    val lc = pico.get.mouse() -> pos_lc
-                    if check(this, lc.c, lc.l) {
-                        set this.l = lc.l
-                        set this.c = lc.c
-                        set MAP[lc.l+1][lc.c+1] = this
-                        return()  ;; piece placed
+            }
+        } with {
+            loop {
+                val n = await Clicks(:left)
+                match n {
+                    1 => {
+                        set this.rot = (this.rot + 90) % 360
+                    }
+                    2 => {
+                        val lc = pico.get.mouse() -> pos_lc
+                        if check(this, lc.c, lc.l) {
+                            set this.l = lc.l
+                            set this.c = lc.c
+                            set MAP[lc.l+1][lc.c+1] = this
+                            return()  ;; piece placed
+                        }
                     }
                 }
             }

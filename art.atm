@@ -38,10 +38,23 @@ test {
     assert(buf2 === buf3)
 }
 
+val black = func (buf) {
+    @{ black=buf }
+}
+
 val players = func (buf) {
     @{
         black = buf,
         red   = buf->paint(pico.color.red),
+    }
+}
+
+val juices = func (buf) {
+    @{
+        black = buf,
+        red   = buf->paint(pico.color.red),
+        green = buf->paint(pico.color.green),
+        blue  = buf->paint(pico.color.blue),
     }
 }
 
@@ -55,7 +68,7 @@ val players = func (buf) {
         @{ x, x, B, B, x, x },
     },
     io = @{
-        input = players <-- @{
+        input = black <-- @{
             @{ x, x, x, x, x, x },
             @{ x, _, _, _, B, x },
             @{ x, _, B, B, B, B },
@@ -63,7 +76,7 @@ val players = func (buf) {
             @{ x, _, _, _, B, x },
             @{ x, x, x, x, x, x },
         },
-        output = players <-- @{
+        output = juices <-- @{
             @{ x, x, x, x, x, x },
             @{ x, _, B, _, _, x },
             @{ B, B, B, B, _, x },
@@ -73,7 +86,7 @@ val players = func (buf) {
         },
     },
     pipe = @{
-        line = players <-- @{
+        line = black <-- @{
             @{ x, x, x, x, x, x },
             @{ x, _, _, _, _, x },
             @{ B, B, B, B, B, B },
@@ -81,7 +94,7 @@ val players = func (buf) {
             @{ x, _, _, _, _, x },
             @{ x, x, x, x, x, x },
         },
-        curve = players <-- @{
+        curve = black <-- @{
             @{ x, x, B, B, x, x },
             @{ x, _, B, B, _, x },
             @{ x, _, B, B, B, B },
