@@ -10,7 +10,7 @@ val colors = @{
     [:io.output]  = art.juices,
 }
 
-func Tile (tag, pos, img) {
+val func Tile (tag, pos, img) {
     par {
         every :draw {
             pico.output.draw.buffer(pos, img)
@@ -24,7 +24,7 @@ func Tile (tag, pos, img) {
     }
 }
 
-func Panel (r) {
+val func Panel (r) {
     val io = pico.rect(@{x=25,y=50}, @{x=30,y=80}, r)
     val ps = pico.rect(@{x=75,y=50}, @{x=30,y=80}, r)
     par {
