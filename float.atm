@@ -213,8 +213,9 @@ val func Float (this) {
     set this.img = match this.clr {
         :black  => this.img
         :player => {
-            set this.clr = PLAYERS.active
-            this.img->art.paint(pico.color[PLAYERS.active])
+            val jog = JOGS[JOGS.i]
+            set this.clr = jog.clr
+            this.img->art.paint(pico.color[jog.clr])
         }
         else => {
             set this.picker = @{ i=-1 }      ;; -1: color picker unset (invalid)

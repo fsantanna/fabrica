@@ -17,7 +17,7 @@ val func neighbours (new) {
 }
 
 val func players (new) {
-    loop i in JOGS.active-1 {
+    loop i in JOGS.i-1 {
         val old = JOGS[i].machines[=].lc
         val no = ((new.l//4) == (old.l//4)) && ((new.c//4) == (old.c//4))
         if no {
@@ -28,7 +28,7 @@ val func players (new) {
 }
 
 val func check (new) {
-    val jog = JOGS[JOGS.active]
+    val jog = JOGS[JOGS.i]
     ifs {
         (new.c < 0) || (new.c >= w) => false    ;; out of screen
         (new.l < 0) || (new.l >= h) => false    ;; out of screen
@@ -44,7 +44,7 @@ val func check (new) {
 }
 
 val func Machine () {
-    val jog = JOGS[JOGS.active]
+    val jog = JOGS[JOGS.i]
     val tile = @{
         tag = :machine,
         rot = 0,

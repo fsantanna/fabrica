@@ -68,7 +68,7 @@ loop l in h {
 }
 
 set JOGS = @{
-    active = nil,
+    i = nil,
     @{
         clr = :blue,
         machines = @{},
@@ -115,9 +115,9 @@ pin hand = tasks(1)     ;; only 1 tile at hand
 set HAND = hand         ;; make HAND a global
 
 loop i in #JOGS {
-    set JOGS.active = i
+    set JOGS.i = i
     await Start()
 }
-set JOGS.active = 1
+set JOGS.i = 1
 
 await(false)
