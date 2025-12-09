@@ -6,8 +6,8 @@ val Panel = require "panel"
 val Start = require "start"
 
 set R = 6           ;; tile dimensions in pixels
-set w = 4*4         ;; map max number of tiles in X
-set h = 4*4         ;; map max number of tiles in Y
+set w = 2*4         ;; map max number of tiles in X
+set h = 2*4         ;; map max number of tiles in Y
 val W = R*w         ;; window has w/h tiles
 val H = R*(h+3)     ;; (+ panel region at the bottom)
 
