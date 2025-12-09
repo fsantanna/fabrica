@@ -16,7 +16,16 @@ val func neighbours (new) {
     }
 }
 
-val func check (jog, new) {
+val func players (new) {
+    loop i in JOGS.active-1 {
+        val old = JOGS[i].machines[=].lc
+        val no = ((new.l//4) == (old.l//4)) && ((new.c//4) == (old.c//4))
+        if no {
+            return(true)
+        }
+    }
+    false
+}
 
 val func check (new) {
     val jog = JOGS[JOGS.active]
