@@ -85,10 +85,8 @@ val func Machine () {
 val func Start () {
     val t = spawn [HAND] Machine()
     await(t)
-    await @.1
     val t = spawn [HAND] Machine()
     await(t)
-    await @.1
 }
 
 Start
