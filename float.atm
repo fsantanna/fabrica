@@ -9,7 +9,7 @@ val func ends (this) {
             else => MAP[l+1][c+1] -> \{ if it => @{it} => @{} }
         }
     }
-    val l, c = (this.l, this.c)
+    val l, c = (this.lc.l, this.lc.c)
     match this {
         :machine => aux(l-1,c) ++ aux(l+1,c) ++ aux(l,c-1) ++ aux(l,c+1)
         :pipe.line => match this.rot {
@@ -43,16 +43,16 @@ test {
     set w = 3
     set h = 3
 
-    set v00 = :machine    @{ l=0, c=0, rot=0   }
-    set v01 = :pipe.line  @{ l=0, c=1, rot=0   }
-    set v02 = :pipe.curve @{ l=0, c=2, rot=180 }
+    set v00 = :machine    @{ lc=@{l=0,c=0}, rot=0   }
+    set v01 = :pipe.line  @{ lc=@{l=0,c=1}, rot=0   }
+    set v02 = :pipe.curve @{ lc=@{l=0,c=2}, rot=180 }
 
-    set v10 = :pipe.curve @{ l=1, c=0, rot=0   }
-    set v11 = :pipe.curve @{ l=1, c=1, rot=180 }
-    set v12 = :pipe.line  @{ rot=90 } ;; not in MAP
+    set v10 = :pipe.curve @{ lc=@{l=1,c=0}, rot=0   }
+    set v11 = :pipe.curve @{ lc=@{l=1,c=1}, rot=180 }
+    set v12 = :pipe.line  @{ lc=@{}, rot=90 } ;; not in MAP
 
-    set v21 = :machine    @{ l=2, c=1, rot=0 }
-    set v22 = :pipe.curve @{ l=2, c=2, rot=270 }
+    set v21 = :machine    @{ lc=@{l=2,c=1}, rot=0 }
+    set v22 = :pipe.curve @{ lc=@{l=2,c=2}, rot=270 }
 
     set MAP = @{
         @{ v00, v01, v02 },
@@ -117,7 +117,7 @@ val func cycle (this, lc) {
 test {
     _cycle_(v00, nil, v00) --> assert
     _cycle_(v02, nil, v00) --> assert
-    cycle(v12, 1, 2) --> assert
+    cycle(v12, @{l=1,c=2}) --> assert
 }
 
 val func conn_up_dn (up, dn) {
