@@ -115,7 +115,8 @@ pin hand = tasks(1)     ;; only 1 tile at hand
 set HAND = hand         ;; make HAND a global
 
 loop i in #JOGS {
-    await Start(JOGS[i])
+    set JOGS.active = i
+    await Start()
 }
 set JOGS.active = 1
 
