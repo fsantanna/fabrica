@@ -215,14 +215,14 @@ val func Float (this) {
         :player => {
             val jog = JOGS[JOGS.i]
             set this.clr = jog.clr
-            this.img->art.paint(pico.color[jog.clr])
+            this.img->art.paint(jog.clr)
         }
         else => {
             set this.picker = @{ i=-1 }      ;; -1: color picker unset (invalid)
             loop i,c in art.juices {
                 set this.picker[i] = @{
                     clr = c,
-                    img = this.img->art.paint(pico.color[c]),
+                    img = this.img->art.paint(c),
                 }
             }
             this.img
@@ -231,23 +231,19 @@ val func Float (this) {
 
     watching :key.dn, :Escape {
         par {
-            val no = pico.color.red -> X.copy
-            set no.a = 0x88
             every :draw {
                 val lc  = pico.get.mouse() -> pos_lc
                 val pos = lc -> lc_pos
-                pico.zet.anchor.pos(:top, :left)
                 pico.zet.rotate(this.rot)
-                pico.output.draw.buffer(pos, this.img)
+                pico.output.draw.buffer(this.img, @{'!',x=pos.x,y=pos.y,w=R,h=R,anc='NW'})
                 if !check(this,lc) {
-                    pico.zet.color.draw(no)
+                    pico.zet.alpha(0x88)
+                    pico.zet.color.draw('red')
                     pico.zet.style(:stroke)
-                    pico.output.draw.rect @{
-                        x=pos.x, y=pos.y, w=R, h=R
-                    }
+                    pico.output.draw.rect(@{'!',x=pos.x,y=pos.y,w=R,h=R,anc='NW'})
+                    pico.zet.alpha(0xFF)
                 }
                 pico.zet.rotate(0)
-                pico.zet.anchor.pos(:center, :middle)
             }
         } with {
             if this.picker != nil {

@@ -13,7 +13,7 @@ val colors = @{
 val func Tile (tag, pos, img) {
     par {
         every :draw {
-            pico.output.draw.buffer(pos, img)
+            pico.output.draw.buffer(img, @{'!',x=pos.x,y=pos.y,w=R,h=R,anc='NW'})
         }
     } with {
         var rect = @{ x=pos.x, y=pos.y, w=R, h=R }
@@ -25,30 +25,30 @@ val func Tile (tag, pos, img) {
 }
 
 val func Panel (r) {
-    val io = pico.rect(@{x=25,y=50}, @{x=30,y=80}, r)
-    val ps = pico.rect(@{x=75,y=50}, @{x=30,y=80}, r)
+    val io = pico.cv.rect(@{'%',x=25,y=50,w=30,h=80,up=r})
+    val ps = pico.cv.rect(@{'%',x=75,y=50,w=30,h=80,up=r})
     par {
         every :draw {
-            pico.zet.clip(r)
-            pico.zet.color.clear(pico.color.white)
+            pico.zet.crop(r)
+            pico.zet.color.clear('white')
             ;;pico.push @{}
             pico.output.clear()
-            pico.zet.color.draw(pico.color.black)
+            pico.zet.color.draw('black')
             pico.zet.style(:stroke)
             pico.output.draw.rect(io)
             pico.output.draw.rect(ps)
         }
     } with {
-        spawn Tile(:io.input,   pico.pos(@{x=33,y=50}, io), art.imgs.io.input)
-        spawn Tile(:io.output,  pico.pos(@{x=67,y=50}, io), art.imgs.io.output)
-        spawn Tile(:machine,    pico.pos(@{x=50,y=50}, r),  art.imgs.machine)
-        spawn Tile(:pipe.line,  pico.pos(@{x=33,y=50}, ps), art.imgs.pipe.line)
-        spawn Tile(:pipe.curve, pico.pos(@{x=67,y=50}, ps), art.imgs.pipe.curve)
+        spawn Tile(:io.input,   pico.cv.pos(@{'%',x=33,y=50,up=io}), art.imgs.io.input)
+        spawn Tile(:io.output,  pico.cv.pos(@{'%',x=67,y=50,up=io}), art.imgs.io.output)
+        spawn Tile(:machine,    pico.cv.pos(@{'%',x=50,y=50,up=r}),  art.imgs.machine)
+        spawn Tile(:pipe.line,  pico.cv.pos(@{'%',x=33,y=50,up=ps}), art.imgs.pipe.line)
+        spawn Tile(:pipe.curve, pico.cv.pos(@{'%',x=67,y=50,up=ps}), art.imgs.pipe.curve)
         await(false)
     } with {
         every :draw {
-            pico.zet.color.clear(pico.color.black)
-            pico.zet.clip()
+            pico.zet.color.clear('black')
+            pico.zet.crop()
             ;; pico.pop()
         }
     }

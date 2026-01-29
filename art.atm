@@ -3,9 +3,9 @@ val M = @{}
 val X = require "atmos.x"
 val pico = require "pico"
 
-val _ = pico.color.white
-val x = pico.color.gray
-val B = pico.color.black
+val _ = 'white'
+val x = 'gray'
+val B = 'black'
 
 func M.paint (buf, clr) {
     val ret = @{}
@@ -26,7 +26,7 @@ func M.paint (buf, clr) {
 }
 
 test {
-    val R = pico.color.red
+    val R = 'red'
     val buf1 = @{
         @{ _, x, B, x, _},
         @{ _, x, B, x, _},

@@ -11,9 +11,11 @@ set h = 2*4         ;; map max number of tiles in Y
 val W = R*w         ;; window has w/h tiles
 val H = R*(h+3)     ;; (+ panel region at the bottom)
 
-pico.zet.title("Fábrica");
-pico.zet.dim.window(5*W, 5*H)   ;; 5 = pixel size
-pico.zet.dim.world(W, H)
+pico.zet.view @{
+    title = "Fábrica",
+    window = @{ w=5*W, h=5*H },   ;; 5 = pixel size
+    world  = @{ w=W,   h=H   },
+}
 pico.zet.expert(true);
 
 func Clicks (but, f) {
@@ -84,12 +86,11 @@ math.randomseed()
 
 spawn {
     every :draw {
-        pico.zet.anchor.pos(:left, :top)
         loop l in 4 {
             loop c in 4 {
                 pico.zet.style(:stroke)
-                pico.zet.color.draw(pico.color.gray)
-                val r = @{ x=(c-1)*4*R, y=(l-1)*4*R, w=4*R, h=4*R }
+                pico.zet.color.draw('gray')
+                val r = @{'!',x=(c-1)*4*R,y=(l-1)*4*R,w=4*R,h=4*R,anc='NW'}
                 pico.output.draw.rect(r)
             }
         }
@@ -99,12 +100,11 @@ spawn {
                 if t {
                     val pos = @{ l=l-1, c=c-1 } -> lc_pos
                     pico.zet.rotate(t.rot)
-                    pico.output.draw.buffer(pos, t.img)
+                    pico.output.draw.buffer(t.img, @{'!',x=pos.x,y=pos.y,w=R,h=R,anc='NW'})
                     pico.zet.rotate(0)
                 }
             }
         }
-        pico.zet.anchor.pos(:center, :middle)
     }
 }
 

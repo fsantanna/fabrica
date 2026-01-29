@@ -49,24 +49,20 @@ val func Machine () {
         tag = :machine,
         rot = 0,
         clr = jog.clr,
-        img = art.imgs.machine->art.paint(pico.color[jog.clr])
+        img = art.imgs.machine->art.paint(jog.clr)
     }
     par {
-        val no = pico.color.red -> X.copy
-        set no.a = 0x88
         every :draw {
             val lc  = pico.get.mouse() -> pos_lc
             val pos = lc -> lc_pos
-            pico.zet.anchor.pos(:top, :left)
-            pico.output.draw.buffer(pos, tile.img)
+            pico.output.draw.buffer(tile.img, @{'!',x=pos.x,y=pos.y,w=R,h=R,anc='NW'})
             if !check(lc) {
-                pico.zet.color.draw(no)
+                pico.zet.alpha(0x88)
+                pico.zet.color.draw('red')
                 pico.zet.style(:stroke)
-                pico.output.draw.rect @{
-                    x=pos.x, y=pos.y, w=R, h=R
-                }
+                pico.output.draw.rect(@{'!',x=pos.x,y=pos.y,w=R,h=R,anc='NW'})
+                pico.zet.alpha(0xFF)
             }
-            pico.zet.anchor.pos(:center, :middle)
         }
     } with {
         loop {
