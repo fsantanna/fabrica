@@ -13,8 +13,8 @@ val H = R*(h+3)     ;; (+ panel region at the bottom)
 
 pico.zet.view @{
     title = "Fábrica",
-    window = @{ w=5*W, h=5*H },   ;; 5 = pixel size
-    world  = @{ w=W,   h=H   },
+    window = @{ '!', w=5*W, h=5*H },   ;; 5 = pixel size
+    world  = @{ '!', w=W,   h=H   },
 }
 pico.zet.expert(true);
 
