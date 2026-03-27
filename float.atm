@@ -235,12 +235,12 @@ val func Float (this) {
                 val lc  = pico.get.mouse() -> pos_lc
                 val pos = lc -> lc_pos
                 pico.zet.rotate(this.rot)
-                pico.output.draw.buffer(this.img, @{'!',x=pos.x,y=pos.y,w=R,h=R,anc='NW'})
+                pico.output.draw.buffer(this.img, @{'#',x=pos.x,y=pos.y,w=1,h=1,anc='NW'})
                 if !check(this,lc) {
                     pico.zet.alpha(0x88)
                     pico.zet.color.draw('red')
                     pico.zet.style(:stroke)
-                    pico.output.draw.rect(@{'!',x=pos.x,y=pos.y,w=R,h=R,anc='NW'})
+                    pico.output.draw.rect(@{'#',x=pos.x,y=pos.y,w=1,h=1,anc='NW'})
                     pico.zet.alpha(0xFF)
                 }
                 pico.zet.rotate(0)

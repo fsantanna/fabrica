@@ -6,15 +6,14 @@ val Panel = require "panel"
 val Start = require "start"
 
 set R = 6           ;; tile dimensions in pixels
-set w = 2*4         ;; map max number of tiles in X
-set h = 2*4         ;; map max number of tiles in Y
-val W = R*w         ;; window has w/h tiles
-val H = R*(h+3)     ;; (+ panel region at the bottom)
+set w = 8           ;; physical width in tiles
+set h = 11          ;; physical height in tiles (8 map + 3 panel)
 
 pico.zet.view @{
     title = "Fábrica",
-    window = @{ '!', w=5*W, h=5*H },   ;; 5 = pixel size
-    world  = @{ '!', w=W,   h=H   },
+    window = @{ '#', w=w, h=h },
+    world  = @{ '#', w=5*w, h=5*h },
+    tile   = @{ w=R, h=R },
 }
 pico.zet.expert(true);
 
@@ -39,15 +38,15 @@ func Double_Click (but, f) {
 
 func pos_lc (pos) {
     @{
-        l = pos.y // R,
-        c = pos.x // R,
+        l = pos.y // 1,
+        c = pos.x // 1,
     }
 }
 
 func lc_pos (lc) {
     @{
-        x = lc.c * R,
-        y = lc.l * R,
+        x = lc.c,
+        y = lc.l,
     }
 }
 
@@ -90,7 +89,7 @@ spawn {
             loop c in 4 {
                 pico.zet.style(:stroke)
                 pico.zet.color.draw('gray')
-                val r = @{'!',x=(c-1)*4*R,y=(l-1)*4*R,w=4*R,h=4*R,anc='NW'}
+                val r = @{'#',x=(c-1)*4,y=(l-1)*4,w=4,h=4,anc='NW'}
                 pico.output.draw.rect(r)
             }
         }
@@ -100,7 +99,7 @@ spawn {
                 if t {
                     val pos = @{ l=l-1, c=c-1 } -> lc_pos
                     pico.zet.rotate(t.rot)
-                    pico.output.draw.buffer(t.img, @{'!',x=pos.x,y=pos.y,w=R,h=R,anc='NW'})
+                    pico.output.draw.buffer(t.img, @{'#',x=pos.x,y=pos.y,w=1,h=1,anc='NW'})
                     pico.zet.rotate(0)
                 }
             }
@@ -108,7 +107,7 @@ spawn {
     }
 }
 
-val r = @{ x=W/2, y=H-(1.5*R), w=W, h=3*R }
+val r = @{ x=w/2, y=h-1.5, w=w, h=3 }
 spawn Panel(r)
 
 pin hand = tasks(1)     ;; only 1 tile at hand

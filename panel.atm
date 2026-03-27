@@ -13,10 +13,10 @@ val colors = @{
 val func Tile (tag, pos, img) {
     par {
         every :draw {
-            pico.output.draw.buffer(img, @{'!',x=pos.x,y=pos.y,w=R,h=R,anc='NW'})
+            pico.output.draw.buffer(img, @{'#',x=pos.x,y=pos.y,w=1,h=1,anc='NW'})
         }
     } with {
-        var rect = @{ x=pos.x, y=pos.y, w=R, h=R }
+        var rect = @{ '#', x=pos.x, y=pos.y, w=1, h=1 }
         loop {
             await Double_Click(:left, \{pico.vs.pos_rect(it,rect)})
             spawn [HAND] Float @{ tag=tag, img=img, rot=0, clr=colors[tag] }
