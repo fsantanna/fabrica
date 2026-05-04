@@ -31,30 +31,22 @@ val func Menu (tgt) {
         style = :stroke,
     }
 
-    spawn Tile(:machine, art.imgs.machine, @{'%',x=0.5,y=0.5,h=0.5})
+    val io = @{ '%', x=0.25, y=0.5, w=0.3, h=0.8 }
+    val ps = @{ '%', x=0.75, y=0.5, w=0.3, h=0.8 }
 
-        every :draw {
-            pico.zet.layer :menu
-            pico.output.draw.rect @{ '%', x=0.25, y=0.5, w=0.3, h=0.8 }
-            pico.output.draw.rect @{ '%', x=0.75, y=0.5, w=0.3, h=0.8 }
-        }
-;;;
-    par {
-    } with {
-        spawn Tile(:io.input,   pico.cv.pos(@{'%',x=33,y=50,up=io}), art.imgs.io.input)
-        spawn Tile(:io.output,  pico.cv.pos(@{'%',x=67,y=50,up=io}), art.imgs.io.output)
-        spawn Tile(:machine,    pico.cv.pos(@{'%',x=50,y=50,up=r}),  art.imgs.machine)
-        spawn Tile(:pipe.line,  pico.cv.pos(@{'%',x=33,y=50,up=ps}), art.imgs.pipe.line)
-        spawn Tile(:pipe.curve, pico.cv.pos(@{'%',x=67,y=50,up=ps}), art.imgs.pipe.curve)
-        await(false)
-    } with {
-        every :draw {
-            pico.zet.color.clear('black')
-            pico.zet.crop()
-            ;; pico.pop()
-        }
+    spawn Tile(:machine,    art.imgs.machine,    @{'%',x=0.5,y=0.5,h=0.5})
+
+    spawn Tile(:io.input,   art.imgs.io.input,   @{'%',x=0.3,y=0.5,h=0.5,up=io})
+    spawn Tile(:io.output,  art.imgs.io.output,  @{'%',x=0.7,y=0.5,h=0.5,up=io})
+
+    spawn Tile(:pipe.line,  art.imgs.pipe.line,  @{'%',x=0.3,y=0.5,h=0.5,up=ps})
+    spawn Tile(:pipe.curve, art.imgs.pipe.curve, @{'%',x=0.7,y=0.5,h=0.5,up=ps})
+
+    every :draw {
+        pico.zet.layer :menu
+        pico.output.draw.rect(io)
+        pico.output.draw.rect(ps)
     }
-;;;
 }
 
 Menu
