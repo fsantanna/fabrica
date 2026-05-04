@@ -1,0 +1,60 @@
+val art = require "art"
+
+val func Tile (tag, img, tgt) {
+    set img = pico.layer.pixmap(:menu, tag, img)
+
+    pico.zet.layer(tag)
+    pico.zet.view @{
+        target = tgt,
+    }
+    
+    await(false)
+    ;;;
+        loop {
+            await Double_Click(:left, \{pico.vs.pos_rect(it,rect)})
+            spawn [HAND] Float @{ tag=tag, img=img, rot=0, clr=colors[tag] }
+        }
+    ;;;
+}
+
+val func Menu (tgt) {
+    pico.layer.empty(:root, :menu, @{w=100, h=20})
+    pico.zet.layer :menu
+    pico.zet.show @{
+        color = :white,
+    }
+    pico.zet.view @{
+        target = tgt,
+    }
+    pico.zet.draw @{
+        color = :black,
+        style = :stroke,
+    }
+
+    spawn Tile(:machine, art.imgs.machine, @{'%',x=0.5,y=0.5,h=0.5})
+
+        every :draw {
+            pico.zet.layer :menu
+            pico.output.draw.rect @{ '%', x=0.25, y=0.5, w=0.3, h=0.8 }
+            pico.output.draw.rect @{ '%', x=0.75, y=0.5, w=0.3, h=0.8 }
+        }
+;;;
+    par {
+    } with {
+        spawn Tile(:io.input,   pico.cv.pos(@{'%',x=33,y=50,up=io}), art.imgs.io.input)
+        spawn Tile(:io.output,  pico.cv.pos(@{'%',x=67,y=50,up=io}), art.imgs.io.output)
+        spawn Tile(:machine,    pico.cv.pos(@{'%',x=50,y=50,up=r}),  art.imgs.machine)
+        spawn Tile(:pipe.line,  pico.cv.pos(@{'%',x=33,y=50,up=ps}), art.imgs.pipe.line)
+        spawn Tile(:pipe.curve, pico.cv.pos(@{'%',x=67,y=50,up=ps}), art.imgs.pipe.curve)
+        await(false)
+    } with {
+        every :draw {
+            pico.zet.color.clear('black')
+            pico.zet.crop()
+            ;; pico.pop()
+        }
+    }
+;;;
+}
+
+Menu

@@ -1,7 +1,7 @@
 require "atmos.env.pico"
 set pico = require "pico"
 
-;;val Menu = require "menu"
+val Menu = require "menu"
 
 set R = 6
 
@@ -12,25 +12,21 @@ pico.zet.dim @{
     '!', w=800, h=800
 }
 
-;; MAP layer
+;; MAP
 do {
     pico.layer.empty(:root, :map, @{w=12,h=12}, @{w=R,h=R})
     pico.zet.layer :map
+    pico.zet.show @{
+        grid  = true,
+    }
     pico.zet.view @{
-        color  = :red,
-        grid   = true,
         target = @{'%', x=0.5, y=0, w=1, h=0.80, anchor='N'},
     }
 }
 
-;; MENU layer
-do {
-    pico.layer.empty(:root, :menu, @{w=1000, h=200})
-    pico.zet.layer :menu
-    pico.zet.view @{
-        color  = :green,
-        target = @{'%', x=0.5, y=1, w=1, h=0.20, anchor='S'}
-    }
+;; MENU
+spawn Menu @{
+    '%', x=0.5, y=1, w=1, h=0.20, anchor='S'
 }
 
 pico.zet.layer :root
