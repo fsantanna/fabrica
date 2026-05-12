@@ -1,15 +1,16 @@
 val art = require "art"
 
 val func Tile (tag, img, tgt) {
-    set img = pico.layer.pixmap(:menu, tag, img)
+    pico.layer.pixmap(:menu, tag, img)
 
     pico.zet.layer(tag)
-    pico.zet.view @{
+    pico.zet.scene @{
         target = tgt,
     }
     
     await(false)
     ;;;
+        var rect = @{ '#', x=pos.x, y=pos.y, w=1, h=1 }
         loop {
             await Double_Click(:left, \{pico.vs.pos_rect(it,rect)})
             spawn [HAND] Float @{ tag=tag, img=img, rot=0, clr=colors[tag] }
@@ -20,13 +21,13 @@ val func Tile (tag, img, tgt) {
 val func Menu (tgt) {
     pico.layer.empty(:root, :menu, @{w=100, h=20})
     pico.zet.layer :menu
-    pico.zet.show @{
+    pico.zet.effect @{
         color = :white,
     }
-    pico.zet.view @{
+    pico.zet.scene @{
         target = tgt,
     }
-    pico.zet.draw @{
+    pico.zet.pencil @{
         color = :black,
         style = :stroke,
     }

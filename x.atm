@@ -16,10 +16,10 @@ pico.zet.dim @{
 do {
     pico.layer.empty(:root, :map, @{w=12,h=12}, @{w=R,h=R})
     pico.zet.layer :map
-    pico.zet.show @{
+    pico.zet.effect @{
         grid  = true,
     }
-    pico.zet.view @{
+    pico.zet.scene @{
         target = @{'%', x=0.5, y=0, w=1, h=0.80, anchor='N'},
     }
 }

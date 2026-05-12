@@ -1,8 +1,5 @@
 val M = @{}
 
-val X = require "atmos.x"
-val pico = require "pico"
-
 val _ = 'white'
 val x = 'gray'
 val B = 'black'
