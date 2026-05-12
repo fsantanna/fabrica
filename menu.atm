@@ -1,13 +1,7 @@
 val art = require "art"
 
 val func Tile (parent, tag, img, tgt) {
-    pico.layer.pixmap(parent, tag, img)
-
-    pico.zet.layer(tag)
-    pico.zet.scene @{
-        target = tgt,
-    }
-
+    pico.layer.pixmap(parent, tag, img, tgt)
     await(false)
     ;;;
         var rect = @{ '#', x=pos.x, y=pos.y, w=1, h=1 }
@@ -19,12 +13,8 @@ val func Tile (parent, tag, img, tgt) {
 }
 
 val func Menu (tgt) {
-    pico.layer.empty(:window, :menu, @{w=100, h=15})
+    pico.layer.empty(:window, :menu, false, tgt)
     pico.zet.layer :menu
-    pico.zet.scene @{
-        clear = false,
-        target = tgt,
-    }
     pico.zet.effect @{
         color = :white,
     }
@@ -40,31 +30,25 @@ val func Menu (tgt) {
     pico.output.draw.rect(io)
     pico.output.draw.rect(ps)
 
-    ;; group sub-layers (Rect.up was removed; use parent layers instead)
-    pico.layer.empty(:menu, :io, @{w=80, h=30})
+    pico.layer.empty(:menu, :io, false, io)
     pico.zet.layer :io
-    pico.zet.scene @{
-        clear = false,
-        target = io,
-    }
     pico.zet.effect @{
         color = :white,
     }
 
-    pico.layer.empty(:menu, :ps, @{w=90, h=30})
+    pico.layer.empty(:menu, :ps, false, ps)
     pico.zet.layer :ps
-    pico.zet.scene @{ target = ps }
     pico.zet.effect @{
         color = :white,
     }
 
-    ;;spawn Tile(:menu, :machine,    art.imgs.machine,    @{'%',x=0.5,y=0.5,w=0.5,h=0.5})
+    spawn Tile(:menu, :machine,  art.imgs.machine,    @{'%',x=0.5,y=0.5,h=0.5})
 
-    spawn Tile(:io,   :io.input,   art.imgs.io.input,   @{'%',x=0.3,y=0.5,w=0.3})
-    spawn Tile(:io,   :io.output,  art.imgs.io.output,  @{'%',x=0.7,y=0.5,w=0.3})
+    spawn Tile(:io, :io.input,   art.imgs.io.input,   @{'%',x=0.3,y=0.5,h=0.5})
+    spawn Tile(:io, :io.output,  art.imgs.io.output,  @{'%',x=0.7,y=0.5,h=0.5})
 
-    spawn Tile(:ps,   :pipe.line,  art.imgs.pipe.line,  @{'%',x=0.3,y=0.5,w=0.5,h=0.5})
-    spawn Tile(:ps,   :pipe.curve, art.imgs.pipe.curve, @{'%',x=0.7,y=0.5,w=0.5,h=0.5})
+    spawn Tile(:ps, :pipe.line,  art.imgs.pipe.line,  @{'%',x=0.3,y=0.5,h=0.5})
+    spawn Tile(:ps, :pipe.curve, art.imgs.pipe.curve, @{'%',x=0.7,y=0.5,h=0.5})
 
     pico.zet.layer :window
     await(false)

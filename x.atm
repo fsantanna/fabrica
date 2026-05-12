@@ -14,7 +14,7 @@ pico.zet.dim @{
 
 ;; MAP
 do {
-    pico.layer.empty(:window, :map, @{w=12,h=12}, @{w=R,h=R})
+    pico.layer.empty(:window, :map, true, @{'!',w=12,h=12}, @{w=R,h=R})
     pico.zet.layer :map
     pico.zet.effect @{
         grid  = true,
