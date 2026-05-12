@@ -14,21 +14,21 @@ pico.zet.dim @{
 
 ;; MAP
 do {
-    pico.layer.empty(:root, :map, @{w=12,h=12}, @{w=R,h=R})
+    pico.layer.empty(:window, :map, @{w=12,h=12}, @{w=R,h=R})
     pico.zet.layer :map
     pico.zet.effect @{
         grid  = true,
     }
     pico.zet.scene @{
-        target = @{'%', x=0.5, y=0, w=1, h=0.80, anchor='N'},
+        target = @{'%', x=0.5, y=0, w=1, h=0.85, anchor='N'},
     }
 }
 
 ;; MENU
 spawn Menu @{
-    '%', x=0.5, y=1, w=1, h=0.20, anchor='S'
+    '%', x=0.5, y=1, w=1, h=0.15, anchor='S'
 }
 
-pico.zet.layer :root
+pico.zet.layer :window
 
 await(false)
