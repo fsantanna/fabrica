@@ -2,14 +2,11 @@ val art = require "art"
 
 val func Tile (parent, tag, img, tgt) {
     pico.layer.pixmap(parent, tag, img, tgt)
-    await(false)
-    ;;;
-        var rect = @{ '#', x=pos.x, y=pos.y, w=1, h=1 }
-        loop {
-            await Double_Click(:left, \{pico.vs.pos_rect(it,rect)})
-            spawn [HAND] Float @{ tag=tag, img=img, rot=0, clr=colors[tag] }
-        }
-    ;;;
+    loop {
+        await Double_Click(:left, tag)
+error:ok
+        spawn [HAND] Float @{ tag=tag, img=img, rot=0, clr=colors[tag] }
+    }
 }
 
 val func Menu (tgt) {
@@ -50,7 +47,6 @@ val func Menu (tgt) {
     spawn Tile(:ps, :pipe.line,  art.imgs.pipe.line,  @{'%',x=0.3,y=0.5,h=0.5})
     spawn Tile(:ps, :pipe.curve, art.imgs.pipe.curve, @{'%',x=0.7,y=0.5,h=0.5})
 
-    pico.zet.layer :window
     await(false)
 }
 
