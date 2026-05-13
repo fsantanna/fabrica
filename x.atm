@@ -15,8 +15,7 @@ pico.zet.dim @{
 func Double_Click (but, tag) {
     loop {
         val m = await(:mouse.button.dn, but, \{
-            val m = pico.get.mouse('%')
-            pico.vs.pos_rect(m,tag)
+            pico.vs.pos.rect(it, tag)
         })
         watching @.200 {
             await(:mouse.button.dn, but, \{ it === m })

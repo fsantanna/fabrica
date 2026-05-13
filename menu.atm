@@ -1,11 +1,10 @@
 val art = require "art"
 
-val func Tile (parent, tag, img, tgt) {
-    pico.layer.pixmap(parent, tag, img, tgt)
+val func Tile (up, me, img, tgt) {
+    pico.layer.pixmap(up, me, img, tgt)
     loop {
-        await Double_Click(:left, tag)
-error:ok
-        spawn [HAND] Float @{ tag=tag, img=img, rot=0, clr=colors[tag] }
+        await Double_Click(:left, me)
+        spawn [HAND] Float @{ tag=me, img=img, rot=0, clr=colors[me] }
     }
 }
 
@@ -39,7 +38,7 @@ val func Menu (tgt) {
         color = :white,
     }
 
-    spawn Tile(:menu, :machine,  art.imgs.machine,    @{'%',x=0.5,y=0.5,h=0.5})
+    ;;spawn Tile(:menu, :machine,  art.imgs.machine,    @{'%',x=0.5,y=0.5,h=0.5})
 
     spawn Tile(:io, :io.input,   art.imgs.io.input,   @{'%',x=0.3,y=0.5,h=0.5})
     spawn Tile(:io, :io.output,  art.imgs.io.output,  @{'%',x=0.7,y=0.5,h=0.5})
