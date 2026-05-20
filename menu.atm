@@ -1,5 +1,13 @@
 val art = require "art"
 
+val colors = @{
+    [:machine]    = :player,
+    [:pipe.line]  = :black,
+    [:pipe.curve] = :black,
+    [:io.input]   = :black,
+    [:io.output]  = art.juices,
+}
+
 val func Tile (up, me, img, tgt) {
     pico.layer.pixmap(up, me, img, tgt)
     loop {
@@ -11,9 +19,7 @@ val func Tile (up, me, img, tgt) {
 val func Menu (tgt) {
     pico.layer.empty(:window, :menu, false, tgt)
     pico.zet.layer :menu
-    pico.zet.effect @{
-        color = :white,
-    }
+    pico.zet.effect @{ color=:white }
     pico.zet.pencil @{
         color = :black,
         style = :stroke,
@@ -28,17 +34,13 @@ val func Menu (tgt) {
 
     pico.layer.empty(:menu, :io, false, io)
     pico.zet.layer :io
-    pico.zet.effect @{
-        color = :white,
-    }
+    pico.zet.effect @{ color=:white }
 
     pico.layer.empty(:menu, :ps, false, ps)
     pico.zet.layer :ps
-    pico.zet.effect @{
-        color = :white,
-    }
+    pico.zet.effect @{ color=:white }
 
-    ;;spawn Tile(:menu, :machine,  art.imgs.machine,    @{'%',x=0.5,y=0.5,h=0.5})
+    spawn Tile(:menu, :machine,  art.imgs.machine,    @{'%',x=0.5,y=0.5,h=0.5})
 
     spawn Tile(:io, :io.input,   art.imgs.io.input,   @{'%',x=0.3,y=0.5,h=0.5})
     spawn Tile(:io, :io.output,  art.imgs.io.output,  @{'%',x=0.7,y=0.5,h=0.5})

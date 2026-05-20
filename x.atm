@@ -1,5 +1,6 @@
 require "atmos.env.pico"
 set pico = require "pico"
+val x = require "atmos.x"
 
 val Menu = require "menu"
 
@@ -26,14 +27,13 @@ func Double_Click (but, tag) {
 
 ;; MAP
 do {
-    pico.layer.empty(:window, :map, true, @{'!',w=12,h=12}, @{w=R,h=R})
+    pico.layer.empty (
+        :window, :map, true,
+        @{'!',w=12,h=12}, @{w=R,h=R},
+        @{'%', x=0.5, y=0, w=1, h=0.85, anchor='N'}
+    )
     pico.zet.layer :map
-    pico.zet.effect @{
-        grid  = true,
-    }
-    pico.zet.scene @{
-        target = @{'%', x=0.5, y=0, w=1, h=0.85, anchor='N'},
-    }
+    pico.zet.effect @{ grid=true }
 }
 
 ;; MENU
