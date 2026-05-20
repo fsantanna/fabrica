@@ -13,6 +13,15 @@ pico.zet.dim @{
     '!', w=800, h=800
 }
 
+func Clicks (but, f) {
+    val m = await(:mouse.button.dn, but, f)
+    watching @.200 {
+        await(:mouse.button.dn, but, \{ it === m })
+        return(2)
+    }
+    1
+}
+
 func Double_Click (but, tag) {
     loop {
         val m = await(:mouse.button.dn, but, \{

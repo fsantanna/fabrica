@@ -1,4 +1,5 @@
 val art = require "art"
+val Float = require "float"
 
 val colors = @{
     [:machine]    = :player,
